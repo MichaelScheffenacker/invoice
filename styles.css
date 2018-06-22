@@ -1,0 +1,68 @@
+body {
+    background-color: #eee;
+    font-family: 'Bitstream Charter', serif;
+}
+
+body, a, a:visited {
+    color: #333;
+    text-decoration: none;
+}
+
+nav {
+    background-color: #2c4359;
+    padding: 2em;
+    font-family: sans-serif;
+
+}
+
+nav span {
+    padding: 0.5em;
+    font-size: 1.2em;
+}
+
+nav span:hover {
+    background-color: #666;
+}
+
+nav span:hover a, nav span:hover a:visited{
+    color: #fff;
+}
+
+nav a, nav a:visited {
+    color: #ccc;
+}
+
+.text-button {
+    line-height: 100%;
+    font-family: sans-serif;
+    font-size: 0.8em;
+    font-weight: bold;
+    text-transform: uppercase;
+    vertical-align:middle;
+}
+
+tr:nth-child(even) {
+    background-color: #ccc;
+}
+
+td {
+    padding: 0.3em;
+    font-size: 0.9em;
+}
+
+label {
+    display: inline-block;
+    width: 10em;
+}
+
+.post-array {
+    margin-top: 2em;
+}
+
+.lineitem .title {
+    width: 30em;
+}
+
+.lineitem .price {
+    width: 5em;
+}
