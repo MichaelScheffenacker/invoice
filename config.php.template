@@ -1,0 +1,15 @@
+<?php
+/**
+ * Created by PhpStorm.
+ * User: msc
+ * Date: 22.06.18
+ * Time: 18:47
+ */
+
+class Config {
+    public $database = array(
+        'dsn' => 'mysql:host=localhost;dbname=invoices;charset=utf8mb4',
+        'username' => 'invoices',
+        'passwd' => ''  // replace with actual password
+    );
+}
