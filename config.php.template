@@ -6,10 +6,13 @@
  * Time: 18:47
  */
 
+// ### Copy this file to config.php and insert the local passwd ###
+
 class Config {
     public $database = array(
         'dsn' => 'mysql:host=localhost;dbname=invoices;charset=utf8mb4',
         'username' => 'invoices',
-        'passwd' => ''  // replace with actual password
+        'passwd' => ''  // replace with local password
     );
 }
+
