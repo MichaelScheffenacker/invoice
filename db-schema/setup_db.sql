@@ -8,7 +8,7 @@ USE bills;
 CREATE TABLE customers (
     id INT(11) NOT NULL AUTO_INCREMENT,
     gender ENUM('none', 'male', 'female') NOT NULL DEFAULT 'none' ,
-    degree VARCHAR(32),
+    title VARCHAR(32),
     forename VARCHAR(128),
     surname VARCHAR(128),
     company VARCHAR(256),
@@ -29,7 +29,7 @@ CREATE TABLE invoices (
     FOREIGN KEY (customer_id) REFERENCES customers(id) ON UPDATE RESTRICT ON DELETE RESTRICT
 );
 
-CREATE TABLE line_items (
+CREATE TABLE lineitems (
     id INT(11) NOT NULL AUTO_INCREMENT,
     invoice_id INT(11) NOT NULL,
     description VARCHAR(2048),

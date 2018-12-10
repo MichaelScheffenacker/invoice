@@ -64,11 +64,13 @@ $row_edit = function (CustomerRecord $customer) : array {
         'mail'
     ]);
     $row = array_diff_key($customer->get_properties(), $removees);
-    $href_edit = "edit_customer.php?id=$customer->customer_id";
+    $href_edit = "edit_customer.php?id=$customer->id";
     $row[] = "<a href='$href_edit' class='text-button'> [edit] </a>";
     return $row;
 };
 
-print_table($customers, $row_edit, 2);
+if (!is_null($customers) and !empty($customers)) {
+    print_table($customers, $row_edit, 2);
+}
 
 require 'includes/html/tail.php';

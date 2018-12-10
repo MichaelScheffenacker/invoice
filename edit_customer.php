@@ -13,7 +13,7 @@ $db = new Database();
 
 require 'includes/html/head.php';
 
-if (array_key_exists('customer_id', $_POST)) {
+if (array_key_exists('id', $_POST)) {
     /* @var $customer CustomerRecord */
     $customer = CustomerRecord::construct_by_alien_array($_POST);
     $db->upsert_customer($customer);
@@ -24,7 +24,7 @@ if (array_key_exists('id', $_GET)) {
 }
 else {
     $customer = new CustomerRecord();
-    $customer->customer_id = $db->get_last_customer_id() + 1;
+    $customer->id = $db->get_last_customer_id() + 1;
 }
 ?>
 

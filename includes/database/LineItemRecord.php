@@ -6,10 +6,10 @@
  * Time: 00:11
  */
 
-class TaskRecord
+class LineItemRecord
 {
-    public $task_id;
+    public $id;
     public $invoice_id;
-    public $title;
-    public $amount;
+    public $description;
+    public $price;
 }

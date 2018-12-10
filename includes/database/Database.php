@@ -9,7 +9,7 @@
 require_once 'utils.php';
 require_once 'CustomerRecord.php';
 require_once 'InvoiceRecord.php';
-require_once 'TaskRecord.php';
+require_once 'LineItemRecord.php';
 require_once 'config.php';
 
 class Database
@@ -27,7 +27,7 @@ class Database
     }
 
     public function get_invoices() {
-        $result = $this->pdo->prepare('SELECT * FROM invoices ORDER BY invoice_num DESC ');
+        $result = $this->pdo->prepare('SELECT * FROM invoices ORDER BY invoice_number DESC ');
         $result->execute();
         $result->setFetchMode(PDO::FETCH_CLASS, 'InvoiceRecord');
         $invoices = $result->fetchAll();
@@ -35,7 +35,7 @@ class Database
     }
 
     public function get_invoice_by_id($id) {
-        $stmt = $this->pdo->prepare('SElECT * FROM invoices WHERE invoice_id = :id');
+        $stmt = $this->pdo->prepare('SElECT * FROM invoices WHERE id = :id');
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, 'InvoiceRecord');
@@ -44,32 +44,32 @@ class Database
         return $invoice;
     }
 
-    public function upsert_invoice($invoice_id, $invoice_num, $date, $customer_id, $purpose) {
+    public function upsert_invoice($id, $invoice_number, $invoice_date, $customer_id, $reference) {
         $stmt = $this->pdo->prepare(
-            'INSERT INTO invoices (invoice_id, invoice_num, `date`, customer_id, purpose) ' .
-            '             VALUES (:invoice_id, :ins_date, :ins_invoice_num, :ins_customer_id, :ins_purpose)' .
-            '         ON DUPLICATE KEY UPDATE invoice_num=:up_invoice_num, `date`=:up_date,' .
-            '             customer_id=:up_customer_id, purpose=:up_purpose'
+            'INSERT INTO invoices (id, invoice_number, invoice_date, customer_id, reference) ' .
+            '             VALUES (:id, :ins_invoice_number, :ins_invoice_date, :ins_customer_id, :ins_reference)' .
+            '         ON DUPLICATE KEY UPDATE invoice_number=:up_invoice_number, invoice_date=:up_invoice_date,' .
+            '             customer_id=:up_customer_id, reference=:up_reference'
         );
 
         $stmt->execute(array(
-            ':invoice_id' => $invoice_id,
-            ':ins_date' => $date,
-            ':ins_invoice_num' => $invoice_num,
+            ':id' => $id,
+            ':ins_invoice_date' => $invoice_date,
+            ':ins_invoice_number' => $invoice_number,
             ':ins_customer_id' => $customer_id,
-            ':ins_purpose' => $purpose,
-            ':up_date' => $date,
-            ':up_invoice_num' => $invoice_num,
+            ':ins_reference' => $reference,
+            ':up_invoice_date' => $invoice_date,
+            ':up_invoice_number' => $invoice_number,
             ':up_customer_id' => $customer_id,
-            ':up_purpose' => $purpose
+            ':up_reference' => $reference
         ));
         return $stmt->errorInfo();
     }
 
     public function get_last_invoice_id() {
-        $stmt = $this->pdo->prepare('SELECT invoice_id FROM invoices ORDER BY invoice_id DESC LIMIT 1');
+        $stmt = $this->pdo->prepare('SELECT id FROM invoices ORDER BY id DESC LIMIT 1');
         $stmt->execute();
-        $last_invoice_id = $stmt->fetch()['invoice_id'];
+        $last_invoice_id = $stmt->fetch()['id'];
         return $last_invoice_id;
     }
 
@@ -82,7 +82,7 @@ class Database
     }
 
     public function get_customer_by_id($id) {
-        $stmt = $this->pdo->prepare('SELECT * FROM customers WHERE customer_id = :id');
+        $stmt = $this->pdo->prepare('SELECT * FROM customers WHERE id = :id');
         $stmt->bindParam(':id', $id);
         $stmt->execute();
         $stmt->setFetchMode(PDO::FETCH_CLASS, 'CustomerRecord');
@@ -99,7 +99,7 @@ class Database
         $insert_place_h_string = implode(", ", $insert_place_h);
         $insert_array = array_combine($insert_place_h, $properties);
 
-        $update_prop = array_diff_key($properties, array('customer_id' => null));
+        $update_prop = array_diff_key($properties, array('id' => null));
         $update_prop_names = array_keys($update_prop);
         $update_columns = array_map_wrap('`', $update_prop_names);
         $update_place_h = array_map_prefix(':up_', $update_prop_names);
@@ -116,34 +116,35 @@ class Database
     }
 
     public function get_last_customer_id() {
-        $stmt = $this->pdo->prepare('SELECT customer_id FROM customers ORDER BY customer_id DESC LIMIT 1');
+        $stmt = $this->pdo->prepare('SELECT id FROM customers ORDER BY id DESC LIMIT 1');
         $stmt->execute();
-        $last_customer_id = $stmt->fetch()['customer_id'];
+        $last_customer_id = $stmt->fetch()['id'];
         return $last_customer_id;
     }
 
-    public function get_tasks_by_invoice_id($invoice_id) {
-        $stmt = $this->pdo->prepare('SELECT * FROM tasks WHERE invoice_id = :invoice_id');
+    public function get_lineitem_by_invoice_id($invoice_id) {
+        $stmt = $this->pdo->prepare('SELECT * FROM lineitems WHERE invoice_id = :invoice_id');
         $stmt->bindParam(':invoice_id', $invoice_id);
         $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_CLASS, 'TaskRecord');
+        $stmt->setFetchMode(PDO::FETCH_CLASS, 'LineItemRecord');
         $tasks = $stmt->fetchAll();
         return $tasks;
     }
 
-    public function delete_tasks_by_invoice_id($invoice_id) {
-        $stmt = $this->pdo->prepare('DELETE FROM tasks WHERE invoice_id = :invoice_id');
+    public function delete_lineitem_by_invoice_id($invoice_id) {
+        $stmt = $this->pdo->prepare('DELETE FROM lineitems WHERE invoice_id = :invoice_id');
         $stmt->bindParam(':invoice_id',$invoice_id);
         $stmt->execute();
     }
 
-    public function insert_task($invoice_id, $title, $amount) {
+    public function insert_lineitem($invoice_id, $description, $price) {
         $stmt = $this->pdo->prepare(
-            'INSERT INTO tasks (invoice_id, title, amount) VALUES (:invoice_id, :title, :amount)'
+            'INSERT INTO lineitems (invoice_id, description, price) ' .
+            'VALUES (:invoice_id, :description, :price)'
         );
         $stmt->bindParam(':invoice_id', $invoice_id);
-        $stmt->bindParam(':title', $title);
-        $stmt->bindParam(':amount', $amount);
+        $stmt->bindParam(':description', $description);
+        $stmt->bindParam(':price', $price);
         $stmt->execute();
     }
 
@@ -153,27 +154,20 @@ class Database
          * database; at least if there is demand for runtime manageability.
          */
         $lookup_table = array(
-            'customer_id' => 'ID',
+            'id' => 'ID',
             'gender' => 'Geschlecht',
-            'name_first' => 'Vorname',
-            'name_last' => 'Nachname',
+            'forename' => 'Vorname',
+            'surname' => 'Nachname',
             'title' => 'Titel',
             'company' => 'Firma',
             'street' => 'Straße',
             'city' => 'Stadt',
             'country' => 'Land',
-            'phone_office' => 'Tel. gesch.',
-            'phone_mobile' => 'Tel. mobil',
-            'mail' => 'Mail',
-            'uid' => 'UID',
-            'vat' => 'USt.',
-            'invoice_id' => 'ID',
-            'invoice_num' => '№',
-            'date' => 'Datum',
-            'purpose' => 'Zweck',
-            'status' => 'Status',
-            'task_id' => 'ID',
-            'amount' => 'Betrag',
+            'vatin' => 'UID',
+            'invoice_number' => '№',
+            'invoice_date' => 'Datum',
+            'reference' => 'Referenz',
+            'price' => 'Betrag',
         );
 
         if (isset($lookup_table[$identifier])) {

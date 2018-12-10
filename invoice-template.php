@@ -6,7 +6,7 @@ $db = new Database();
 $invoice_id = $_GET['invoice_id'] ?? $db->get_last_invoice_id();
 $invoice = $db->get_invoice_by_id($invoice_id);
 $customer = $db->get_customer_by_id($invoice->customer_id);
-$tasks = $db->get_tasks_by_invoice_id($invoice_id);
+$tasks = $db->get_lineitem_by_invoice_id($invoice_id);
 
 
 function eur_price($price) {
@@ -14,23 +14,23 @@ function eur_price($price) {
     return "€\,$f_price";
 }
 
-$full_name = "$customer->title $customer->name_first $customer->name_last";
-$purpose = $invoice->purpose;
-$date = date("j.n.Y", strtotime($invoice->date));
-$uid = ($customer->uid != "") ? "UID: $customer->uid" : "";
+$full_name = "$customer->degree $customer->forename $customer->surname";
+$purpose = $invoice->reference;
+$date = date("j.n.Y", strtotime($invoice->invoice_date));
+$vatin = ($customer->vatin != "") ? "UID: $customer->vatin" : "";
 if ($customer->gender = 'x') {
     $salutation = 'geehrte Damen und Herren';
 }
 else {
-    $salutation = ($customer->gender == 'm') ? 'geehrter Herr' : 'geehrte Frau ' . $customer->name_last;
+    $salutation = ($customer->gender == 'm') ? 'geehrter Herr' : 'geehrte Frau ' . $customer->surname;
 }
 $invoice_items = '';
 $sum_net = 0;
-/* @var $task TaskRecord */
+/* @var $task LineItemRecord */
 foreach ($tasks as $task) {
-    $sum_net += $task->amount;
-    $price = eur_price($task->amount);
-    $invoice_items .= "\multicolumn{2}{@{}l@{}}{ $task->title } &  & $price \\\\\n";
+    $sum_net += $task->price;
+    $price = eur_price($task->price);
+    $invoice_items .= "\multicolumn{2}{@{}l@{}}{ $task->description } &  & $price \\\\\n";
 }
 $tax = $sum_net * 0.2;
 $sum_gross = $sum_net * 1.2;
@@ -79,7 +79,7 @@ Michael Scheffenacker & | & Klosterstraße 1, 5450 Werfen & | &  +43\,650\,980\,
 \hline \\
 
 \normalsize 
-Klosterstraße 1 & Rechnung Nr. <?php echo $invoice->invoice_num ?> \\
+Klosterstraße 1 & Rechnung Nr. <?php echo $invoice->invoice_number ?> \\
 5450 Werfen & <?php echo $date ?> \\
  +43\,650\,980\,89\,85\,& UID: ATU67000639 \\
  michael.scheffenacker@formiculare.org \\
@@ -92,7 +92,7 @@ z.\,H.<?php echo $full_name ?> &\\
 <?php echo $customer->street ?>  &\\
 <?php echo $customer->city ?> &\\
 <?php echo $customer->country ?> &\\
-<?php echo $uid ?>
+<?php echo $vatin ?>
 \end{tabularx}
 
 

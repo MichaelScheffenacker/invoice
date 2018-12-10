@@ -19,13 +19,15 @@ $invoices = $db->get_invoices();
 
 $row_edit = function (InvoiceRecord $invoice) : array {
     $row = $invoice->get_properties();
-    $href_create = "create_invoice.php?invoice_id=$invoice->invoice_id";
-    $href_edit = "edit_invoice.php?invoice_id=$invoice->invoice_id";
+    $href_create = "create_invoice.php?invoice_id=$invoice->id";
+    $href_edit = "edit_invoice.php?invoice_id=$invoice->id";
     $row[] = "<a href='$href_create' class='text-button'> [pdf] </a>";
     $row[] = "<a href='$href_edit' class='text-button'> [edit] </a>";
     return $row;
 };
 
-print_table($invoices, $row_edit, 2);
+if (!is_null($invoices) and !empty($invoices)) {
+    print_table($invoices, $row_edit, 2);
+}
 
 require 'includes/html/tail.php';

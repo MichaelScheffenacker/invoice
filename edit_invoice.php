@@ -12,31 +12,32 @@ $db = new Database();
 $customers = $db->get_customers();
 
 // ## saving to db gets solely triggered by a post request with an invoice_id
-if (array_key_exists('invoice_id', $_POST)) {
+if (array_key_exists('id', $_POST)) {
     $db->upsert_invoice(
-            $_POST['invoice_id'] ?? '',
-            $_POST['invoice_num'] ?? '',
-            $_POST['date'] ?? '',
+            $_POST['id'] ?? '',
+            $_POST['invoice_number'] ?? '',
+            $_POST['invoice_date'] ?? '',
             $_POST['customer_id'] ?? '',
-            $_POST['purpose'] ?? ''
+            $_POST['reference'] ?? ''
     );
 
-    // task are all getting deleted and inserted again on every "save"
-    $db->delete_tasks_by_invoice_id($_POST['invoice_id']);
-    if (isset($_POST['tasks'])) {
-        foreach ($_POST['tasks'] as $task) {
-            if ($task['title'] or $task['price']) {
-                $db->insert_task($_POST['invoice_id'], $task['title'], $task['price']);
+    // lineitem are all getting deleted and inserted again on every "save"
+    $db->delete_lineitem_by_invoice_id($_POST['id']);
+    if (isset($_POST['lineitems'])) {
+        foreach ($_POST['lineitems'] as $lineitem) {
+            if ($lineitem['description'] or $lineitem['price']) {
+                $db->insert_lineitem($_POST['id'], $lineitem['description'], $lineitem['price']);
             }
         }
     }
 }
 
 // ## fetching from db has to be placed after saving (post) instructions
+/* @var $invoice InvoiceRecord */
 if (array_key_exists('invoice_id', $_GET)) {
     $invoice = $db->get_invoice_by_id($_GET['invoice_id']);
-    $invoice_id = $invoice->invoice_id;
-    $tasks = $db->get_tasks_by_invoice_id($invoice_id);
+    $invoice_id = $invoice->id;
+    $lineitems = $db->get_lineitem_by_invoice_id($invoice_id);
 }
 else {
     $invoice_id = $db->get_last_invoice_id() + 1;
@@ -48,25 +49,25 @@ require 'includes/html/head.php';
 <h1>Rechnung Editieren</h1>
 <form action="" method="POST">
     <?php
-    print_form_input('invoice_id', 'Database ID', $invoice_id, 'text',true);
-    print_form_input('date', 'Rechnungsdatum', $invoice->date ?? '');
-    print_form_input('invoice_num', 'Rechnungsnummer', $invoice->invoice_num ?? '');
+    print_form_input('id', 'Database ID', $invoice_id, 'text',true);
+    print_form_input('invoice_date', 'Rechnungsdatum', $invoice->invoice_date ?? '');
+    print_form_input('invoice_number', 'Rechnungsnummer', $invoice->invoice_number ?? '');
     print_form_select('customer_id', 'Kunde', $customers, $invoice->customer_id ?? -1);
-    print_form_input('purpose', 'Zweck', $invoice->purpose ?? '');
+    print_form_input('reference', 'Referenz/Zweck', $invoice->reference ?? '');
     ?>
 
-    <div><h2>Leistungen: </h2><p id="add_task_button" class="text-button">[add]</p>
+    <div><h2>Leistungen: </h2><p id="add_lineitem_button" class="text-button">[add]</p>
         <?php
         $row_number = 1;
-        if (isset($tasks) and sizeof($tasks) > 0) {
-            /* @var $task TaskRecord */
-            foreach ($tasks as $task) {
-                echo task_row($row_number, $task->title, $task->amount);
+        if (isset($lineitems) and sizeof($lineitems) > 0) {
+            /* @var $lineitem LineItemRecord */
+            foreach ($lineitems as $lineitem) {
+                echo lineitem_row($row_number, $lineitem->description, $lineitem->price);
                 $row_number += 1;
             }
         }
         else {
-            echo task_row(1);
+            echo lineitem_row(1);
         }
         ?>
     </div>

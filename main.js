@@ -1,20 +1,20 @@
 document.addEventListener('DOMContentLoaded', code);
 
 function code() {
-    let addButton = document.getElementById('add_task_button');
-    addButton.addEventListener('click', () => addTaskRow());
+    let addButton = document.getElementById('add_lineitem_button');
+    addButton.addEventListener('click', () => addLineitem());
 
-    function addTaskRow() {
-        let taskRows = document.getElementsByClassName('task-row');
-        let lastTaskRow = taskRows[taskRows.length - 1];
-        let newRow = lastTaskRow.cloneNode(true);
-        let num = Number(newRow.getAttribute('number'));
-        newRow.setAttribute('number', num + 1);
-        Array.from(newRow.children).forEach(el => {
+    function addLineitem() {
+        let lineitem = document.getElementsByClassName('lineitem');
+        let lastLineitem = lineitem[lineitem.length - 1];
+        let newLineitem = lastLineitem.cloneNode(true);
+        let num = Number(newLineitem.getAttribute('data-number'));
+        newLineitem.setAttribute('data-number', num + 1);
+        Array.from(newLineitem.children).forEach(el => {
             el.setAttribute('aria-label', el.getAttribute('aria-label').replace(num, num+1));
             el.setAttribute('name', el.getAttribute('name').replace(num, num + 1));
         });
-        lastTaskRow.parentElement.appendChild(newRow);
+        lastLineitem.parentElement.appendChild(newLineitem);
 
     }
 

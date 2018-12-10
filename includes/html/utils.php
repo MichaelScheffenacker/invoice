@@ -81,22 +81,23 @@ function print_form_select(string $id, string $label, array $values, int $select
 // todo: This form_options() function has to be generalised: it is using
 // todo: explicitly attributes from CustomerRecord class. In that case the applicable
 // todo: classes need attributes expressing their display.
-// todo: tl;dr > Put rendering information close to the data.
+
 function form_options($values, $selected) {
     $str = '';
     foreach ($values as $value) {
-        $sel = ($value->customer_id == $selected) ? 'selected' : '';
-        $str .= "<option value='$value->customer_id' $sel> " .
-            " $value->name_first $value->name_last</option>\n";
+        /** @var CustomerRecord $value */
+        $sel = ($value->id == $selected) ? 'selected' : '';
+        $str .= "<option value='$value->id' $sel> " .
+            " $value->forename $value->surname</option>\n";
     }
     return $str;
 }
 
-function task_row(int $number, string $title='', int $price=0) {
+function lineitem_row(int $number, string $description='', int $price=0) {
     $str =
-        "<div number='$number' class='lineitem'>\n" .
-        "    <input class='title' aria-label='task $number title' type='text' name='tasks[$number][title]' value='$title'>\n" .
-        "    <input class='price' aria-label='task $number price' type='text' name='tasks[$number][price]' value='$price'>\n" .
+        "<div data-number='$number' class='lineitem'>\n" .
+        "    <input class='title' aria-label='item $number description' type='text' name='lineitems[$number][description]' value='$description'>\n" .
+        "    <input class='price' aria-label='item $number price' type='text' name='lineitems[$number][price]' value='$price'>\n" .
         "</div>\n";
     return $str;
 }

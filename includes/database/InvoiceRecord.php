@@ -10,10 +10,9 @@ require_once 'Record.php';
 require_once 'includes/html/utils.php';
 
 class InvoiceRecord extends  Record {
-    public $invoice_id;
-    public $invoice_num;
-    public $date;
+    public $id;
+    public $invoice_number;
+    public $invoice_date;
     public $customer_id;
-    public $purpose;
-    public $status;
+    public $reference;
 }
