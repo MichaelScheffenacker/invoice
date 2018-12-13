@@ -73,6 +73,14 @@ class Database
         return $last_invoice_id;
     }
 
+    public function get_last_invoice_number() {
+        $stmt_string = 'SELECT invoice_number FROM invoices ORDER BY invoice_number DESC LIMIT 1';
+        $stmt = $this->pdo->prepare($stmt_string);
+        $stmt->execute();
+        $last_invoice_number = $stmt->fetch()['invoice_number'];
+        return $last_invoice_number;
+    }
+
     public function get_customers() {
         $stmt = $this->pdo->prepare('SELECT * FROM customers');
         $stmt->execute();

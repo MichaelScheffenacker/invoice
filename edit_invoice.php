@@ -49,9 +49,10 @@ require 'includes/html/head.php';
 <h1>Rechnung Editieren</h1>
 <form action="" method="POST">
     <?php
+    $invoice_number = $invoice->invoice_number ?? $db->get_last_invoice_number() + 1;
     print_form_input('id', 'Database ID', $invoice_id, 'text',true);
     print_form_input('invoice_date', 'Rechnungsdatum', $invoice->invoice_date ?? '');
-    print_form_input('invoice_number', 'Rechnungsnummer', $invoice->invoice_number ?? '');
+    print_form_input('invoice_number', 'Rechnungsnummer', $invoice_number);
     print_form_select('customer_id', 'Kunde', $customers, $invoice->customer_id ?? -1);
     print_form_input('reference', 'Referenz/Zweck', $invoice->reference ?? '');
     ?>
