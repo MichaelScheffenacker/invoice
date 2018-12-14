@@ -7,6 +7,7 @@
  */
 
 require_once 'includes/database/Database.php';
+require_once 'includes/database/LineItemRecord.php';
 
 function print_table(array $matrix, callable $row_edit, int $tabs=0) {
     $header_row = array_keys(call_user_func($row_edit, $matrix[0]));
@@ -106,7 +107,7 @@ function generate_html_void_element(string $tag_name, array $attributes){
     return $str;
 }
 
-function print_lineitem_html_input_element(int $number, string $class, $value) {
+function print_lineitem_input_element(int $number, string $class, $value) {
     $attributes = array(
         'class' => $class,
         'aria-label' => "item $number $class",
@@ -117,10 +118,12 @@ function print_lineitem_html_input_element(int $number, string $class, $value) {
     print generate_html_void_element('input', $attributes);
 }
 
-function print_lineitem_row(int $number, string $description='', int $price=0) {
+function print_lineitem_row(int $number, LineItemRecord $lineitem) {
+    $description = $lineitem->description;
+    $price = $lineitem->price;
     print '<div data-number="$number" class="lineitem">';
-    print_lineitem_html_input_element($number, 'description', $description);
-    print_lineitem_html_input_element($number, 'price', $price);
+    print_lineitem_input_element($number, 'description', $description);
+    print_lineitem_input_element($number, 'price', $price);
     print '</div>';
 }
 
@@ -129,11 +132,14 @@ function print_lineitems(array $lineitems) {
     if (sizeof($lineitems) > 0) {
         /* @var $lineitem LineItemRecord */
         foreach ($lineitems as $lineitem) {
-            print_lineitem_row($row_number, $lineitem->description, $lineitem->price);
+            print_lineitem_row($row_number, $lineitem);
             $row_number += 1;
         }
     }
     else {
-        print_lineitem_row(1);
+        $lineitem = new LineItemRecord();
+        $lineitem->description = '';
+        $lineitem->price = 0;
+        print_lineitem_row(1, $lineitem);
     }
 }
