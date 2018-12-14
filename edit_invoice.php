@@ -58,19 +58,7 @@ require 'includes/html/head.php';
     ?>
 
     <div><h2>Leistungen: </h2><p id="add_lineitem_button" class="text-button">[add]</p>
-        <?php
-        $row_number = 1;
-        if (isset($lineitems) and sizeof($lineitems) > 0) {
-            /* @var $lineitem LineItemRecord */
-            foreach ($lineitems as $lineitem) {
-                echo lineitem_row($row_number, $lineitem->description, $lineitem->price);
-                $row_number += 1;
-            }
-        }
-        else {
-            echo lineitem_row(1);
-        }
-        ?>
+        <?php print_lineitems($lineitems ?? []) ?>
     </div>
 
     <div> <input type="submit" value="save"> </div>

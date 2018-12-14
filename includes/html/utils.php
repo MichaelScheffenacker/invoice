@@ -93,11 +93,47 @@ function form_options($values, $selected) {
     return $str;
 }
 
-function lineitem_row(int $number, string $description='', int $price=0) {
-    $str =
-        "<div data-number='$number' class='lineitem'>\n" .
-        "    <input class='title' aria-label='item $number description' type='text' name='lineitems[$number][description]' value='$description'>\n" .
-        "    <input class='price' aria-label='item $number price' type='text' name='lineitems[$number][price]' value='$price'>\n" .
-        "</div>\n";
+function generate_html_attribute(string $attribute, string $value) {
+    return $attribute . '="' . $value . '"';
+}
+
+function generate_html_void_element(string $tag_name, array $attributes){
+    $str = "<$tag_name";
+    foreach ($attributes as $attribute => $value) {
+        $str .= ' ' . generate_html_attribute($attribute, $value);
+    }
+    $str .= ' >';
     return $str;
+}
+
+function print_lineitem_html_input_element(int $number, string $class, $value) {
+    $attributes = array(
+        'class' => $class,
+        'aria-label' => "item $number $class",
+        'type' => 'text',
+        'name' => "lineitems[$number][$class]",
+        'value' => "$value"
+    );
+    print generate_html_void_element('input', $attributes);
+}
+
+function print_lineitem_row(int $number, string $description='', int $price=0) {
+    print '<div data-number="$number" class="lineitem">';
+    print_lineitem_html_input_element($number, 'description', $description);
+    print_lineitem_html_input_element($number, 'price', $price);
+    print '</div>';
+}
+
+function print_lineitems(array $lineitems) {
+    $row_number = 1;
+    if (sizeof($lineitems) > 0) {
+        /* @var $lineitem LineItemRecord */
+        foreach ($lineitems as $lineitem) {
+            print_lineitem_row($row_number, $lineitem->description, $lineitem->price);
+            $row_number += 1;
+        }
+    }
+    else {
+        print_lineitem_row(1);
+    }
 }
