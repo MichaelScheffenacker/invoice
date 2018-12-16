@@ -14,7 +14,7 @@ class CustomerRecord extends Record
 {
     public $id = '';
     public $gender = '';
-    public $degree = '';
+    public $title = '';
     public $forename = '';
     public $surname = '';
     public $company = '';
