@@ -8,6 +8,7 @@
 
 require_once 'includes/database/Database.php';
 require_once 'includes/database/LineItemRecord.php';
+require_once 'generic_html_generators.php';
 
 function print_table(array $matrix, callable $row_edit, int $tabs=0) {
     $header_row = array_keys(call_user_func($row_edit, $matrix[0]));
@@ -60,52 +61,13 @@ function print_form_input(
     $dis = $readonly ? 'readonly' : '';
     print
         "<div> " .
-        form_label($id, $label) .
+        generate_form_label($id, $label) .
         " <input id='$id' type='$type' name='$id' value='$value' $dis> " .
         "</div>\n";
 }
 
-function form_label(string $id, string $label) {
-    return "<label for='$id'>$label:</label>";
-}
 
-function print_form_select(string $id, string $label, array $values, int $selected=-1) {
-    print
-        "<div>\n" .
-        form_label($id, $label) .
-        "\n<select id='$id' name='$id'>" .
-        form_options($values, $selected) .
-        "\n</select>" .
-        "\n</div>\n";
-}
 
-// todo: This form_options() function has to be generalised: it is using
-// todo: explicitly attributes from CustomerRecord class. In that case the applicable
-// todo: classes need attributes expressing their display.
-
-function form_options($values, $selected) {
-    $str = '';
-    foreach ($values as $value) {
-        /** @var CustomerRecord $value */
-        $sel = ($value->id == $selected) ? 'selected' : '';
-        $str .= "<option value='$value->id' $sel> " .
-            " $value->forename $value->surname</option>\n";
-    }
-    return $str;
-}
-
-function generate_html_attribute(string $attribute, string $value) {
-    return $attribute . '="' . $value . '"';
-}
-
-function generate_html_void_element(string $tag_name, array $attributes){
-    $str = "<$tag_name";
-    foreach ($attributes as $attribute => $value) {
-        $str .= ' ' . generate_html_attribute($attribute, $value);
-    }
-    $str .= ' >';
-    return $str;
-}
 
 function print_lineitem_input_element(int $number, string $class, $value) {
     $attributes = array(
@@ -130,14 +92,14 @@ function print_lineitem_row(int $number, LineItemRecord $lineitem) {
 function print_lineitems(array $lineitems) {
     $row_number = 1;
     if (sizeof($lineitems) > 0) {
-        /* @var $lineitem LineItemRecord */
+        /** @var LineItemRecord $lineitem */
         foreach ($lineitems as $lineitem) {
             print_lineitem_row($row_number, $lineitem);
             $row_number += 1;
         }
     }
     else {
-        $lineitem = new LineItemRecord();
+        $lineitem = new LineItemRecord;
         $lineitem->description = '';
         $lineitem->price = 0;
         print_lineitem_row(1, $lineitem);

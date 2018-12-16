@@ -26,14 +26,18 @@ if (array_key_exists('id', $_POST)) {
     if (isset($_POST['lineitems'])) {
         foreach ($_POST['lineitems'] as $lineitem) {
             if ($lineitem['description'] or $lineitem['price']) {
-                $db->insert_lineitem($_POST['id'], $lineitem['description'], $lineitem['price']);
+                $db->insert_lineitem(
+                        $_POST['id'],
+                        $lineitem['description'],
+                        $lineitem['price']
+                );
             }
         }
     }
 }
 
 // ## fetching from db has to be placed after saving (post) instructions
-/* @var $invoice InvoiceRecord */
+/** @var InvoiceRecord $invoice */
 if (array_key_exists('invoice_id', $_GET)) {
     $invoice = $db->get_invoice_by_id($_GET['invoice_id']);
     $invoice_id = $invoice->id;
@@ -44,16 +48,33 @@ else {
 }
 
 // ## html ##
+$invoice_number = $invoice->invoice_number ?? $db->get_last_invoice_number() + 1;
+$extract_customer_id = function (CustomerRecord $customer) {
+    return $customer->id;
+};
+$extract_customer_name = function (CustomerRecord $customer) {
+    return "$customer->forename $customer->surname";
+};
+$customer_options = new HtmlFormOptions(
+    $customers,
+    $extract_customer_id,
+    $extract_customer_name
+);
+
 require 'includes/html/head.php';
 ?>
 <h1>Rechnung Editieren</h1>
 <form action="" method="POST">
     <?php
-    $invoice_number = $invoice->invoice_number ?? $db->get_last_invoice_number() + 1;
     print_form_input('id', 'Database ID', $invoice_id, 'text',true);
     print_form_input('invoice_date', 'Rechnungsdatum', $invoice->invoice_date ?? '');
     print_form_input('invoice_number', 'Rechnungsnummer', $invoice_number);
-    print_form_select('customer_id', 'Kunde', $customers, $invoice->customer_id ?? -1);
+    print_form_select(
+            'customer_id',
+            'Kunde',
+            $customer_options,
+            $invoice->customer_id ?? -1
+    );
     print_form_input('reference', 'Referenz/Zweck', $invoice->reference ?? '');
     ?>
 
