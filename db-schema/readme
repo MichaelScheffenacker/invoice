@@ -1,1 +1,4 @@
-setup_db.sql can be run via 'mariadb < setup_db.sql'
+setup_db.sql can be run via:
+
+$ sudo mariadb < setup_db.sql
+
