@@ -14,7 +14,7 @@ function eur_price($price) {
     return "€\,$f_price";
 }
 
-$full_name = "$customer->degree $customer->forename $customer->surname";
+$full_name = "$customer->title $customer->forename $customer->surname";
 $purpose = $invoice->reference;
 $date = date("j.n.Y", strtotime($invoice->invoice_date));
 $vatin = ($customer->vatin != "") ? "UID: $customer->vatin" : "";
