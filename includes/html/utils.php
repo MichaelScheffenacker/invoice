@@ -69,7 +69,7 @@ function print_form_input(
 
 
 
-function print_lineitem_input_element(int $number, string $class, $value) {
+function generate_lineitem_input_element(int $number, string $class, $value) {
     $attributes = array(
         'class' => $class,
         'aria-label' => "item $number $class",
@@ -77,16 +77,18 @@ function print_lineitem_input_element(int $number, string $class, $value) {
         'name' => "lineitems[$number][$class]",
         'value' => "$value"
     );
-    print generate_html_void_element('input', $attributes);
+    return generate_html_void_element('input', $attributes);
 }
 
 function print_lineitem_row(int $number, LineItemRecord $lineitem) {
     $description = $lineitem->description;
     $price = $lineitem->price;
-    print '<div data-number="$number" class="lineitem">';
-    print_lineitem_input_element($number, 'description', $description);
-    print_lineitem_input_element($number, 'price', $price);
-    print '</div>';
+    $description_element =
+        generate_lineitem_input_element($number, 'description', $description);
+    $price_element = generate_lineitem_input_element($number, 'price', $price);
+    $content = $description_element . $price_element;
+    $attributes = ['class' => 'lineitem', 'data-number' => $number];
+    print generate_html_element('div', $content, $attributes);
 }
 
 function print_lineitems(array $lineitems) {
