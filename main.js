@@ -5,8 +5,8 @@ function code() {
     addButton.addEventListener('click', () => addLineitem());
 
     function addLineitem() {
-        let lineitem = document.getElementsByClassName('lineitem');
-        let lastLineitem = lineitem[lineitem.length - 1];
+        let lineitems = document.getElementsByClassName('lineitem');
+        let lastLineitem = lineitems[lineitems.length - 1];
         let newLineitem = lastLineitem.cloneNode(true);
         let num = Number(newLineitem.getAttribute('data-number'));
         newLineitem.setAttribute('data-number', num + 1);
