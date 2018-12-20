@@ -7,6 +7,13 @@
  */
 
 require 'includes/html/head.php';
+require_once 'includes/database/Database.php';
+$db = new Database();
+
+$invoice_id = $_GET['invoice_id'] ?? $db->get_last_invoice_id();
+$invoice = $db->get_invoice_by_id($invoice_id);
+$customer = $db->get_customer_by_id($invoice->customer_id);
+$linetems = $db->get_lineitem_by_invoice_id($invoice_id);
 
 $file_name = 'test';
 $tex_file_name = $file_name . '.tex';
@@ -39,7 +46,10 @@ print "<a href='$pdf_file_url'>$pdf_file_name</a>";
 $command = "/usr/bin/pdflatex -output-directory=$latex_directory $tex_file_path 2>&1";
 try {
     echo "\n\n<pre> \n";
-    echo "command: $command \n\n";
+    print_r($invoice);
+    print_r($customer);
+    print_r($linetems);
+    echo "\n\ncommand: $command \n\n";
     echo "output of system($command): \n >>>>> \n";
     echo system($command);
     echo "\n <<<<< \n</pre>\n\n";

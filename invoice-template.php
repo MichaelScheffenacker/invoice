@@ -1,14 +1,5 @@
 <?php
 
-require_once 'includes/database/Database.php';
-$db = new Database();
-
-$invoice_id = $_GET['invoice_id'] ?? $db->get_last_invoice_id();
-$invoice = $db->get_invoice_by_id($invoice_id);
-$customer = $db->get_customer_by_id($invoice->customer_id);
-$tasks = $db->get_lineitem_by_invoice_id($invoice_id);
-
-
 function eur_price($price) {
     $f_price = number_format($price, 2, ',', '.');
     return "€\,$f_price";
@@ -36,11 +27,11 @@ else {
 }
 $invoice_items = '';
 $sum_net = 0;
-/* @var $task LineItemRecord */
-foreach ($tasks as $task) {
-    $sum_net += $task->price;
-    $price = eur_price($task->price);
-    $invoice_items .= "\multicolumn{2}{@{}l@{}}{ $task->description } &  & $price \\\\\n";
+/* @var $lineitem LineItemRecord */
+foreach ($linetems as $lineitem) {
+    $sum_net += $lineitem->price;
+    $price = eur_price($lineitem->price);
+    $invoice_items .= "\multicolumn{2}{@{}l@{}}{ $lineitem->description } &  & $price \\\\\n";
 }
 $tax = $sum_net * 0.2;
 $sum_gross = $sum_net * 1.2;
