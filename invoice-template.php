@@ -1,44 +1,3 @@
-<?php
-
-function eur_price($price) {
-    $f_price = number_format($price, 2, ',', '.');
-    return "€\,$f_price";
-}
-
-$company = $customer->company;
-$full_name = "$customer->title $customer->forename $customer->surname";
-$purpose = $invoice->reference;
-if ($company) {
-    $address_first_lines = "$company & $purpose \\\\\n";
-    $address_first_lines .= "z.\,H. $full_name &\\\\\n";
-}
-else {
-    $address_first_lines = "$full_name & $purpose \\\\\n";
-}
-$date = date("j.n.Y", strtotime($invoice->invoice_date));
-$vatin = ($customer->vatin != "") ? "UID: $customer->vatin" : "";
-$gender = $customer->gender;
-if ($gender == 'none') {
-    $salutation = 'geehrte Damen und Herren';
-}
-else {
-    $salutation = ($gender == 'male') ? 'geehrter Herr ' : 'geehrte Frau ';
-    $salutation .= $customer->surname;
-}
-$invoice_items = '';
-$sum_net = 0;
-/* @var $lineitem LineItemRecord */
-foreach ($linetems as $lineitem) {
-    $sum_net += $lineitem->price;
-    $price = eur_price($lineitem->price);
-    $invoice_items .= "\multicolumn{2}{@{}l@{}}{ $lineitem->description } &  & $price \\\\\n";
-}
-$tax = $sum_net * 0.2;
-$sum_gross = $sum_net * 1.2;
-$f_tax = eur_price($tax);
-$f_sum_net = eur_price($sum_net);
-$f_sum_gross = eur_price($sum_gross);
-?>
 \documentclass[a4paper,fontsize=11pt,parskip=full-]{scrlttr2}
 \usepackage[ngerman]{babel}
 \usepackage{ucs}
@@ -80,7 +39,7 @@ Michael Scheffenacker & | & Klosterstraße 1, 5450 Werfen & | &  +43\,650\,980\,
 \hline \\
 
 \normalsize 
-Klosterstraße 1 & Rechnung Nr. <?php echo $invoice->invoice_number ?> \\
+Klosterstraße 1 & Rechnung Nr. <?php echo $invoice_number ?> \\
 5450 Werfen & <?php echo $date ?> \\
  +43\,650\,980\,89\,85\,& UID: ATU67000639 \\
  michael.scheffenacker@gmail.com \\
