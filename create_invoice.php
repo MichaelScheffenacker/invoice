@@ -20,6 +20,12 @@ function eur_price($price) {
     return "€\,$f_price";
 }
 
+function convert_to_file_name_format($str) {
+    $str = preg_replace('/[^\w -]/', '', $str);
+    $str = preg_replace('/[ ]/', '-', $str);
+    return strtolower($str);
+}
+
 
 ### template variable definitions ###
 
@@ -64,8 +70,15 @@ $f_sum_gross = eur_price($sum_gross);
 
 
 ### file name definitions ###
-
-$file_name = 'test';
+$leading_zeros = str_repeat('0', 3 - floor(log10($invoice_number)));
+$file_number = "R$leading_zeros$invoice_number";
+$file_surname = convert_to_file_name_format($customer->surname);
+$file_reference = convert_to_file_name_format($purpose);
+$file_name =
+    "$file_number" . '_' .
+    "$file_surname" . '_' .
+    "$file_reference" . '_' .
+    "$invoice->invoice_date";
 $tex_file_name = $file_name . '.tex';
 $pdf_file_name = $file_name . '.pdf';
 
@@ -108,7 +121,13 @@ catch (Exception $e) {
 
 require 'includes/html/head.php';
 
-print "<a href='$pdf_file_url'>$pdf_file_name</a>";
+print "<p>";
+print generate_html_element(
+    'a',
+    $pdf_file_name,
+    ['href' => $pdf_file_url, 'class' => 'invoice-link']
+);
+print "</p>";
 
 print "\n\n<pre> \n";
 if ($error_outputs){

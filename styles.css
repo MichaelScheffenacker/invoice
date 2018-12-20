@@ -66,3 +66,7 @@ label {
 .lineitem .price {
     width: 5em;
 }
+
+.invoice-link {
+    font-size: 2em;
+}
