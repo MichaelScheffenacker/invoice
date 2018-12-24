@@ -9,24 +9,24 @@
 
 // ##### basic html generators #####
 
-// todo: generalize function to handle non-double-quote attributes
 function generate_html_attributes(array $attributes) {
     $str = '';
     /** @var string $attribute */
     foreach ($attributes as $attribute => $value) {
-        $str .= ' ' . $attribute . '="' . $value . '"';
+        $value_part = $value === '' ? '' : '="' . $value . '"';
+        $str .= ' ' . $attribute . $value_part;
     }
     return $str;
 }
 
 function generate_html_element(string $tag, string $content, array $attributes=[]) {
     $attributes_string = generate_html_attributes($attributes);
-    return "<$tag $attributes_string>$content</$tag>";
+    return "<$tag$attributes_string>$content</$tag>";
 }
 
 function generate_html_void_element(string $tag, array $attributes=[]) {
     $attributes_string = generate_html_attributes($attributes);
-    return "<$tag $attributes_string />";
+    return "<$tag$attributes_string />";
 }
 
 
