@@ -48,7 +48,10 @@ class HtmlGeneratorTests extends TestCase
         );
         $this->assertSame(
             '<img src="./logo.png" alt="logo" />',
-            generate_html_void_element('img', ['src' => './logo.png'])
+            generate_html_void_element(
+                'img',
+                ['src' => './logo.png', 'alt' => 'logo']
+            )
         );
     }
 
@@ -63,5 +66,18 @@ class HtmlGeneratorTests extends TestCase
             '<div><br /></div>',
             generate_html_element('div', $inner)
         );
+    }
+
+    public function test_html_form_options_class() {
+        $options = new HtmlFormOptions(
+            ['a'=> [12, 13], 'b' =>[22, 23]],
+            function ($e) { return $e[0]; },
+            function ($e) { return $e[1]; }
+        );
+        $arr = $options->options_array;
+        $this->assertSame(12, $options->extract_value($arr['a']));
+        $this->assertSame(13, $options->extract_content($arr['a']));
+        $this->assertSame(22, $options->extract_value($arr['b']));
+        $this->assertSame(23, $options->extract_content($arr['b']));
     }
 }
