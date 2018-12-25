@@ -74,8 +74,6 @@ function generate_form_options( HtmlFormOptions $options, $selected=-1) {
             $attributes['selected'] = '';
         }
         $str .= generate_html_element('option', $content, $attributes);
-//        $str .= "<option value='$value->id' $sel> " .
-//            " $value->forename $value->surname</option>\n";
     }
     return $str;
 }

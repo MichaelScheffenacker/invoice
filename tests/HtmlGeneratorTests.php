@@ -68,16 +68,39 @@ class HtmlGeneratorTests extends TestCase
         );
     }
 
+    public function test_form_label() {
+        $this->assertSame(
+            '<label class="test" for="id">content</label>',
+            generate_form_label(
+                'id',
+                'content',
+                ['class' => 'test']
+            )
+        );
+    }
+
     public function test_html_form_options_class() {
         $options = new HtmlFormOptions(
             ['a'=> [12, 13], 'b' =>[22, 23]],
-            function ($e) { return $e[0]; },
-            function ($e) { return $e[1]; }
+            function ($option) { return $option[0]; },
+            function ($option) { return $option[1]; }
         );
         $arr = $options->options_array;
         $this->assertSame(12, $options->extract_value($arr['a']));
         $this->assertSame(13, $options->extract_content($arr['a']));
         $this->assertSame(22, $options->extract_value($arr['b']));
         $this->assertSame(23, $options->extract_content($arr['b']));
+    }
+
+    public function test_form_options() {
+        $options = new HtmlFormOptions(
+            [['id' => 1, 'content' => 'one'], ['id' => 2, 'content' => 'two']],
+            function ($option) { return $option['id']; },
+            function ($option) { return $option['content']; }
+        );
+        $this->assertSame(
+            '<option value="1">one</option><option value="2">two</option>',
+            generate_form_options($options)
+        );
     }
 }
