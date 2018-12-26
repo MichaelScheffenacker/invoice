@@ -69,7 +69,7 @@ require 'includes/html/head.php';
     print_form_input('id', 'Database ID', $invoice_id, 'text',true);
     print_form_input('invoice_date', 'Rechnungsdatum', $invoice->invoice_date ?? '');
     print_form_input('invoice_number', 'Rechnungsnummer', $invoice_number);
-    print_form_select(
+    print generate_form_select(
             'customer_id',
             'Kunde',
             $customer_options,

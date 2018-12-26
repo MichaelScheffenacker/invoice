@@ -103,4 +103,20 @@ class HtmlGeneratorTests extends TestCase
             generate_form_options($options)
         );
     }
+
+    public function test_form_select() {
+        $options = new HtmlFormOptions(
+            [['id' => 1, 'content' => 'one'], ['id' => 2, 'content' => 'two']],
+            function ($option) { return $option['id']; },
+            function ($option) { return $option['content']; }
+        );
+        $result = '<div><label for="id">label</label>'
+            . '<select id="id" name="id"><option value="1">one</option>'
+            . '<option value="2">two</option></select></div>';
+        $this->assertSame($result, generate_form_select(
+            'id',
+            'label',
+            $options
+        ));
+    }
 }

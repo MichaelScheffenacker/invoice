@@ -30,7 +30,7 @@ function generate_html_void_element(string $tag, array $attributes=[]) {
 }
 
 
-// ##### html form functions #####
+// ##### html form generators #####
 
 function generate_form_label(string $id, string $label, array $attributes=[]) {
     $attributes['for'] = $id;
@@ -78,7 +78,7 @@ function generate_form_options( HtmlFormOptions $options, $selected=-1) {
     return $str;
 }
 
-function print_form_select(
+function generate_form_select(
     string $id,
     string $label,
     HtmlFormOptions $options,
@@ -86,8 +86,9 @@ function print_form_select(
 ) {
     $attributes = ['id' => $id, 'name' => $id];
     $options_string = generate_form_options($options, $selected);
-    print "<div>";
-    print generate_form_label($id, $label);
-    print generate_html_element('select', $options_string, $attributes);
-    print "</div>";
+    $str = "<div>";
+    $str .= generate_form_label($id, $label);
+    $str .= generate_html_element('select', $options_string, $attributes);
+    $str .= "</div>";
+    return $str;
 }
