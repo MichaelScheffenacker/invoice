@@ -37,6 +37,30 @@ function generate_form_label(string $id, string $label, array $attributes=[]) {
     return generate_html_element('label', $label, $attributes);
 }
 
+function generate_form_input(
+    string $id,
+    string $label,
+    string $value='',
+    string $type='text',
+    bool $readonly=False
+) {
+    $attributes = [
+        'id' => $id,
+        'type' => $type,
+        'name' => $id,
+        'value' => $value
+    ];
+    if ($readonly) {
+        $attributes['readonly'] = Null;
+    }
+    $str =
+        "<div>" .
+        generate_form_label($id, $label) .
+        generate_html_void_element('input', $attributes) .
+        "</div>\n";
+    return $str;
+}
+
 class HtmlFormOptions {
     public $options_array;
     private $value_callback;

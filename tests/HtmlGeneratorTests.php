@@ -79,6 +79,39 @@ class HtmlGeneratorTests extends TestCase
         );
     }
 
+    public function test_form_input() {
+
+        $result = '<div><label for="id">label</label>'
+            . '<input id="id" type="text" name="id" value="" />'
+            . '</div>' . "\n";
+        $this->assertSame(
+            $result,
+            generate_form_input('id', 'label')
+        );
+
+        $result = '<div><label for="id">label</label>'
+            . '<input id="id" type="text" name="id" value="value" />'
+            . '</div>' . "\n";
+        $this->assertSame(
+            $result,
+            generate_form_input('id', 'label', 'value')
+        );
+
+        $result = '<div><label for="id">label</label>'
+            . '<input id="id" type="text" name="id" value="" readonly />'
+            . '</div>' . "\n";
+        $this->assertSame(
+            $result,
+            generate_form_input(
+                'id',
+                'label',
+                '',
+                'text',
+                True
+            )
+        );
+    }
+
     public function test_html_form_options_class() {
         $options = new HtmlFormOptions(
             ['a'=> [12, 13], 'b' =>[22, 23]],

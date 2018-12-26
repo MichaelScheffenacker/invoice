@@ -46,28 +46,10 @@ function print_form(Record $record) {
     $properties = $record::get_property_names();
     print "<form action='' method='POST'>";
     foreach ($properties as $property) {
-        print_form_input($property, $property, $record->$property ?? '');
+        print generate_form_input($property, $property, $record->$property ?? '');
     }
     print "<div> <input type='submit' value='save'></div> </form>\n";
 }
-
-function print_form_input(
-    string $id,
-    string $label,
-    string $value='',
-    string $type='text',
-    bool $readonly=false
-) {
-    $dis = $readonly ? 'readonly' : '';
-    print
-        "<div> " .
-        generate_form_label($id, $label) .
-        " <input id='$id' type='$type' name='$id' value='$value' $dis> " .
-        "</div>\n";
-}
-
-
-
 
 function generate_lineitem_input_element(int $number, string $class, $value) {
     $attributes = array(
