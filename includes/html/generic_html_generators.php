@@ -13,7 +13,7 @@ function generate_html_attributes(array $attributes) {
     $str = '';
     /** @var string $attribute */
     foreach ($attributes as $attribute => $value) {
-        $value_part = $value === '' ? '' : '="' . $value . '"';
+        $value_part = $value === Null ? '' : '="' . $value . '"';
         $str .= ' ' . $attribute . $value_part;
     }
     return $str;
@@ -71,7 +71,7 @@ function generate_form_options( HtmlFormOptions $options, $selected=-1) {
         $content = $options->extract_content($option);
         $attributes = ['value' => $value];
         if ($value == $selected) {
-            $attributes['selected'] = '';
+            $attributes['selected'] = Null;
         }
         $str .= generate_html_element('option', $content, $attributes);
     }

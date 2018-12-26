@@ -22,7 +22,7 @@ class HtmlGeneratorTests extends TestCase
         );
         $this->assertSame(
             ' value="1" selected',
-            generate_html_attributes(['value' => 1, 'selected' => ''])
+            generate_html_attributes(['value' => 1, 'selected' => Null])
         );
     }
 
