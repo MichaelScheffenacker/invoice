@@ -102,6 +102,9 @@ class HtmlGeneratorTests extends TestCase
             '<option value="1">one</option><option value="2">two</option>',
             generate_form_options($options)
         );
+        $result = '<option value="1">one</option>';
+        $result .='<option value="2" selected>two</option>';
+        $this->assertSame($result, generate_form_options($options, 2));
     }
 
     public function test_form_select() {
