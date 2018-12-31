@@ -6,9 +6,9 @@
  * Time: 17:49
  */
 
-require_once 'includes/database/Database.php';
-require_once 'includes/database/LineItemRecord.php';
-require_once 'generic_html_generators.php';
+require_once __DIR__ . '/../database/Database.php';
+require_once __DIR__ . '/../database/LineItemRecord.php';
+require_once __DIR__ . '/generic_html_generators.php';
 
 function print_table(array $matrix, callable $row_edit, int $tabs=0) {
     $header_row = array_keys(call_user_func($row_edit, $matrix[0]));

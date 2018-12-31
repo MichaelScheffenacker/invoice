@@ -7,7 +7,8 @@
  */
 
 use PHPUnit\Framework\TestCase;
-require_once '../includes/html/generic_html_generators.php';
+require_once __DIR__ . '/../includes/html/generic_html_generators.php';
+require_once 'TestRecord.php';
 
 class HtmlGeneratorTests extends TestCase
 {

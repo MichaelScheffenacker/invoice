@@ -6,7 +6,7 @@
  * Time: 19:45
  */
 
-require_once 'includes/html/utils.php';
+require_once __DIR__ . '/../../includes/html/utils.php';
 
 class Record
 {

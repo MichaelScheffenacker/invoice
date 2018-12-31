@@ -6,11 +6,11 @@
  * Time: 03:21
  */
 
-require_once 'utils.php';
-require_once 'CustomerRecord.php';
-require_once 'InvoiceRecord.php';
-require_once 'LineItemRecord.php';
-require_once 'config.php';
+require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/CustomerRecord.php';
+require_once __DIR__ . '/InvoiceRecord.php';
+require_once __DIR__ . '/LineItemRecord.php';
+require_once __DIR__ . '/../../config.php';
 
 class Database
 {
