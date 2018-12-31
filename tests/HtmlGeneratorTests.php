@@ -156,4 +156,19 @@ class HtmlGeneratorTests extends TestCase
             $options
         ));
     }
+
+    public function test_generate_form() {
+        $record = new TestRecord();
+        $record->one = 1;
+        $record->two = 2;
+        $result = '<form action="" method="POST">' . "\n"
+            . '<div><label for="one">one</label>'
+            . '<input id="one" type="text" name="one" value="1" />'
+            . '</div>' . "\n"
+            . '<div><label for="two">two</label>'
+            . '<input id="two" type="text" name="two" value="2" />'
+            . '</div>' . "\n"
+            . '<div><input type="submit" value="save"></div></form>' . "\n";
+        $this->assertSame($result, generate_form($record));
+    }
 }

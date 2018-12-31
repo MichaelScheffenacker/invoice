@@ -42,15 +42,6 @@ function print_wtabs(string $printee, int $tabs) {
     print str_repeat("\t", $tabs) . $printee;
 }
 
-function print_form(Record $record) {
-    $properties = $record::get_property_names();
-    print "<form action='' method='POST'>";
-    foreach ($properties as $property) {
-        print generate_form_input($property, $property, $record->$property ?? '');
-    }
-    print "<div> <input type='submit' value='save'></div> </form>\n";
-}
-
 function generate_lineitem_input_element(int $number, string $class, $value) {
     $attributes = array(
         'class' => $class,

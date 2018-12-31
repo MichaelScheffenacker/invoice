@@ -116,3 +116,16 @@ function generate_form_select(
     $str .= "</div>";
     return $str;
 }
+
+function generate_form(Record $record) {
+    $fields = $record::get_property_names();
+    $str = '<form action="" method="POST">' . "\n";
+    foreach ($fields as $field) {
+        $str .= generate_form_input(
+            $field, $field,
+            $record->$field ?? ''
+        );
+    }
+    $str .= '<div><input type="submit" value="save"></div></form>' . "\n";
+    return $str;
+}

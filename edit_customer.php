@@ -29,7 +29,7 @@ else {
 ?>
 
 <h1>Kunde Editieren</h1>
-<?php print_form($customer); ?>
+<?php print generate_form($customer); ?>
 
 <details class="post-array">
     <summary>Post Array <code>$POST</code></summary>
