@@ -72,11 +72,8 @@ class HtmlFormOptions {
         callable $content_callback
     ) {
         $this->options_array = $options_array;
-        $default_callback = function ($option) {
-            return $option->id;
-        };
-        $this->value_callback = $value_callback ?? $default_callback;
-        $this->content_callback = $content_callback ?? $default_callback;
+        $this->value_callback = $value_callback;
+        $this->content_callback = $content_callback;
     }
 
     public function extract_value($option) {
