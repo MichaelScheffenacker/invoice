@@ -115,7 +115,7 @@ function generate_form_select(
 }
 
 function generate_form_inputs_from_record(Record $record) {
-    $fields = $record::get_property_names();
+    $fields = $record::get_field_names();
     $str ='';
     foreach ($fields as $field) {
         $str .= generate_form_input(
