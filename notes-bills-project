@@ -1,0 +1,78 @@
+=== Notes on the invoices/bills project
+msc 22-06-2018:
+
+
+== html/utils.php
+
+When a Record gets printed as a html table, there are columns that
+should not be shown. There are also columns added to the table, this
+columns do not only contain data, but can contain functionality that
+is referring to the the rest of the records data. Like a html link
+to the editing page of the given record, which requires the records id
+to be inserted into the links href attribute. This could be achieved
+by passing callback functions to the table row assembling method.
+
+
+== Record.php
+
+Records represent records in the database (single lines of a table) or
+a Tuple in terms of Relational Calculus.  Records are also designed to
+be used with PDO.  PDO::FETCH_CLASS does not allow to define an explicit
+constructor.  Therefore a class that is derived from Record has to
+implement all column names, reflecting the original column names letter
+by letter.
+
+Initially I thought it would be a good idea, if every Record (regarding
+to the table it belongs to) would know by itself how to represent itself
+in various situations. But this clearly violates Uncle Bob's separations
+rules.  In particular it violates the SRP (Single Responsibility Principle).
+The database schema might clearly change for different reasons and at
+different times than the representation of the data.
+
+But on the other hand might it not still be nice if the the data knew
+how it should be presented. I mean the presentation of quite a few things
+depends strongly on how the data is structured. A column with a boolean
+range should be represented by a checkbox, a foreign key should be
+represented by a link to the next table.
+
+I think one problem here is there is no business rules in this application,
+it is merely a frontend for a database.
+
+I think, that is actually the business logic: the keeping and managing
+of the data (Records) and it's permissions.
+
+
+== customers.php
+
+The reason for implementing the following callback $row_edit is to create
+a additional column in the table with a link to the editing page for the
+record.  It is not sufficient to simply pass the columns, because the link
+needs to know the id of the record to create a proper reference.
+
+But this again leads to other difficulties: the table rows are passed as
+Records, in this case, more specific, as CustomerRecord.  But an Object can
+obviously (at least in PHP) not be extended like an array.  this leads to
+an necessary (in a way defining) transformation from the object to an
+array.  The array is then easily iterated in the html generating loop
+(interestingly the object can be iterated over its properties with exactly
+the same loop, which lead to a confusion at some point).  The object-to-
+array transformation part is actually wet, because it will be repeated
+in every of those callbacks for each table.  Moving the transformation part
+out of the callback also isn't an option due to required access to the
+objects id.  Although the the array created by ->get_properties() is
+associative and indexed by the property names of the object.  And therefore
+it would actually be possible to substitute the object by the array from
+the beginning!? But this leads us to the next problem:
+
+Writing the callback requires knowledge of the class: ->customer_id is
+specific for the CustomerRecord class.  In exotic cases it might not even be
+clear which property to use.  On the other hand in most cases the required
+property might be the id of the record.  So it might be possible to find
+a way to implement a solution to automatically handle (or at leas support)
+the record id cases.  Record ids are all named differently in the various
+tables, therefore it might be necessary to implement a uniform getter method
+for the different ids.  This is an example where the use of the name "id"
+for primary keys simplifies development.
+
+Possibly some kind of a callback factory would be better. But how is it done
+without knowing the id, how to have the id it at hand?
