@@ -114,15 +114,33 @@ function generate_form_select(
     return $str;
 }
 
-function generate_form(Record $record) {
+function generate_form_inputs_from_record(Record $record) {
     $fields = $record::get_property_names();
-    $str = '<form action="" method="POST">' . "\n";
+    $str ='';
     foreach ($fields as $field) {
         $str .= generate_form_input(
             $field, $field,
             $record->$field ?? ''
         );
     }
+    return $str;
+}
+
+
+// Since generate_form() takes a Record as a parameter, it does not allow for
+// anything else, than a simple reflection of the Record. The function should
+// be generalized to allow (1) combinations of different Record types like in
+// edit_invoice.php (a plain Invoice plus regarding LineItems as a list) and
+// (2) to specify the input type, e.g. dropdowns fed from other Records or
+// implicit lists, like the mentioned one.
+// (Currently the implicit lists are implemented by deleting all entries
+// and reinserting them, on 'save'; this might not be the best solution in
+// all cases.)
+// todo: Generalize generate_form().
+
+function generate_form(Record $record) {
+    $str = '<form action="" method="POST">' . "\n";
+    $str .= generate_form_inputs_from_record($record);
     $str .= '<div><input type="submit" value="save"></div></form>' . "\n";
     return $str;
 }
