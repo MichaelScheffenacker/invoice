@@ -11,15 +11,6 @@ require_once __DIR__ . '/../database/Record.php';
 require_once __DIR__ . '/Style.php';
 require_once __DIR__ . '/TextStyle.php';
 
-class Field {
-    public $value;
-    public $style;
-
-    public function __construct($value, Style $style) {
-        $this->value = $value;
-        $this->style = $style;
-    }
-}
 
 // One problem with this implementation (and this problem includes the naming
 // of the class) is its rigidity against varying number and order of fields.
@@ -50,7 +41,7 @@ class Field {
 // cetera could be managed.
 
 
-class StyledRecord {
+class StyledFields {
     public $record;
 
     private $fields = array();
@@ -59,24 +50,24 @@ class StyledRecord {
         $this->record = $record;
         foreach ($this->record->get_fields() as $field_name => $field_value) {
             $readonly = ($field_name === 'id');
-            $style = new TextStyle($field_name, $field_value, $readonly);
-            $this->fields[$field_name] = new Field($field_value, $style);
+            $styled_field = new TextStyle($field_name, $field_value, $readonly);
+            $this->fields[$field_name] = $styled_field;
         }
     }
 
     public function generate_html() : String {
         $str = '';
-        /** @var Field $field */
+        /** @var Style $field */
         foreach ($this->fields as $field) {
-            $str .= $field->style->generate_html();
+            $str .= $field->generate_html();
         }
         return $str;
     }
 
     public function set_field_readonly($field_name) {
-        $style = $this->fields[$field_name]->style;
-        /** @var TextStyle $style */
-        $style->readonly = True;
+        $field = $this->fields[$field_name];
+        /** @var TextStyle $field */
+        $field->readonly = True;
     }
 
 }
