@@ -53,12 +53,20 @@ function generate_form_input(
     if ($readonly) {
         $attributes['readonly'] = Null;
     }
-    $str =
-        "<div>" .
-        generate_form_label($id, $label) .
-        generate_html_void_element('input', $attributes) .
-        "</div>\n";
+    $str = "<div>"
+        . generate_form_label($id, $label)
+        . generate_html_void_element('input', $attributes)
+        . "</div>\n";
     return $str;
+}
+
+function generate_text_input(
+    string $id,
+    string $label,
+    string $value='',
+    bool $readonly=False
+) {
+    return generate_form_input($id, $label, $value, 'text', $readonly);
 }
 
 class HtmlFormOptions {
