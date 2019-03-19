@@ -1,3 +1,21 @@
+# Create a User for the Project
+
+$ cp setup_user.sql.template setup_user.sql
+
+Add a passwd to setup_user.sql
+
+$ sudo mariadb < setup_user.sql
+
+
+# Set Up config.php
+
+$ cp config.php.template config.php
+
+Add the same passwd to config.php
+
+
+# Set Up the database for the project
+
 setup_db.sql can be run via:
 
 $ sudo mariadb < setup_db.sql

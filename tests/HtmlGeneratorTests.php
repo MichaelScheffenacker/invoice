@@ -113,6 +113,24 @@ class HtmlGeneratorTests extends TestCase
         );
     }
 
+    public function test_text_input() {
+        $expected = generate_form_input(
+            'id',
+            'label',
+            '',
+            'text',
+            True
+        );
+        $this->assertSame(
+            $expected,
+            generate_text_input(
+            'id',
+            'label',
+            '',
+            True
+        ));
+    }
+
     public function test_html_form_options_class() {
         $options = new HtmlFormOptions(
             ['a'=> [12, 13], 'b' =>[22, 23]],
