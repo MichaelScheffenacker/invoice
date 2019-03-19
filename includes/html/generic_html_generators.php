@@ -9,7 +9,7 @@
 
 // ##### basic html generators #####
 
-function generate_html_attributes(array $attributes) {
+function generate_html_attributes(array $attributes) : string {
     $str = '';
     /** @var string $attribute */
     foreach ($attributes as $attribute => $value) {
@@ -19,12 +19,17 @@ function generate_html_attributes(array $attributes) {
     return $str;
 }
 
-function generate_html_element(string $tag, string $content, array $attributes=[]) {
+function generate_html_element(
+    string $tag,
+    string $content,
+    array $attributes=[]
+) : string
+{
     $attributes_string = generate_html_attributes($attributes);
     return "<$tag$attributes_string>$content</$tag>";
 }
 
-function generate_html_void_element(string $tag, array $attributes=[]) {
+function generate_html_void_element(string $tag, array $attributes=[]) : string {
     $attributes_string = generate_html_attributes($attributes);
     return "<$tag$attributes_string />";
 }
@@ -32,7 +37,12 @@ function generate_html_void_element(string $tag, array $attributes=[]) {
 
 // ##### html form generators #####
 
-function generate_form_label(string $id, string $label, array $attributes=[]) {
+function generate_form_label(
+    string $id,
+    string $label,
+    array $attributes=[]
+) : string
+{
     $attributes['for'] = $id;
     return generate_html_element('label', $label, $attributes);
 }
@@ -43,7 +53,8 @@ function generate_form_input(
     string $value='',
     string $type='text',
     bool $readonly=False
-) {
+) : string
+{
     $attributes = [
         'id' => $id,
         'type' => $type,
@@ -65,7 +76,8 @@ function generate_text_input(
     string $label,
     string $value='',
     bool $readonly=False
-) {
+) : string
+{
     return generate_form_input($id, $label, $value, 'text', $readonly);
 }
 
@@ -93,7 +105,7 @@ class HtmlFormOptions {
     }
 }
 
-function generate_form_options( HtmlFormOptions $options, $selected=-1) {
+function generate_form_options( HtmlFormOptions $options, $selected=-1) : string {
     $str = '';
     foreach ($options->options_array as $option) {
         $value = $options->extract_value($option);
@@ -112,24 +124,21 @@ function generate_form_select(
     string $label,
     HtmlFormOptions $options,
     int $selected=-1
-) {
+) : string
+{
     $attributes = ['id' => $id, 'name' => $id];
     $options_string = generate_form_options($options, $selected);
-    $str = "<div>";
-    $str .= generate_form_label($id, $label);
-    $str .= generate_html_element('select', $options_string, $attributes);
-    $str .= "</div>";
-    return $str;
+    return "<div>"
+        . generate_form_label($id, $label)
+        . generate_html_element('select', $options_string, $attributes)
+        . "</div>";
 }
 
-function generate_form_inputs_from_record(Record $record) {
+function generate_form_inputs_from_record(Record $record) : string {
     $fields = $record::get_field_names();
     $str ='';
     foreach ($fields as $field) {
-        $str .= generate_form_input(
-            $field, $field,
-            $record->$field ?? ''
-        );
+        $str .= generate_form_input($field, $field, $record->$field ?? '');
     }
     return $str;
 }
@@ -146,9 +155,8 @@ function generate_form_inputs_from_record(Record $record) {
 // all cases.)
 // todo: Generalize generate_form().
 
-function generate_form(Record $record) {
-    $str = '<form action="" method="POST">' . "\n";
-    $str .= generate_form_inputs_from_record($record);
-    $str .= '<div><input type="submit" value="save"></div></form>' . "\n";
-    return $str;
+function generate_form(Record $record) : string {
+    return '<form action="" method="POST">' . "\n"
+        . generate_form_inputs_from_record($record)
+        . '<div><input type="submit" value="save"></div></form>' . "\n";
 }
