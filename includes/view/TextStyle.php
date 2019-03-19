@@ -22,13 +22,11 @@ class TextStyle extends Style {
         $this->readonly = $readonly;
     }
 
-    public function generate_html(): String {
+    public function generate_html(): string {
         $id = $this->name;
         $label = $this->name;
         $value = $this->value ?? '';
-        $type = 'text';
         $readonly = $this->readonly;
-        $str = generate_form_input($id, $label, $value, $type, $readonly);
-        return $str;
+        return generate_text_input($id, $label, $value, $readonly);
     }
 }
