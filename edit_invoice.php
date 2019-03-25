@@ -8,6 +8,9 @@
 
 require_once 'includes/database/Database.php';
 require_once 'includes/html/utils.php';
+require_once 'includes/view/StyledFields.php';
+require_once 'includes/view/DropDownStyle.php';
+
 $db = new Database();
 $customers = $db->get_customers();
 
@@ -61,40 +64,20 @@ $customer_options = new HtmlFormOptions(
     $extract_customer_name
 );
 
+$styled_record = new StyledFields($invoice);
+$drop_down_customers = new DropDownStyle(
+        'customers',
+        '',
+        $customer_options
+);
+$styled_record->field_style('customer', $drop_down_customers);
+
+
 require 'includes/html/head.php';
 ?>
 <h1>Rechnung Editieren</h1>
 <form action="" method="POST">
-    <?php
-    print generate_form_input(
-            'id',
-            'Database ID',
-            $invoice_id,
-            'text',
-            true
-    );
-    print generate_form_input(
-            'invoice_date',
-            'Rechnungsdatum',
-            $invoice->invoice_date ?? ''
-    );
-    print generate_form_input(
-            'invoice_number',
-            'Rechnungsnummer',
-            $invoice_number
-    );
-    print generate_form_select(
-            'customer_id',
-            'Kunde',
-            $customer_options,
-            $invoice->customer_id ?? -1
-    );
-    print generate_form_input(
-            'reference',
-            'Referenz/Zweck',
-            $invoice->reference ?? ''
-    );
-    ?>
+    <?php print $styled_record->generate_html() ?>
 
     <div><h2>Leistungen: </h2><p id="add_lineitem_button" class="text-button">[add]</p>
         <?php print_lineitems($lineitems ?? []) ?>
