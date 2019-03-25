@@ -107,7 +107,7 @@ catch (Exception $e) {
     $error_outputs .= "Writing of <code>$tex_file_path</code> file failed.\n";
 }
 
-$command = "/usr/bin/pdflatex -output-directory=$latex_directory $tex_file_path 2>&1";
+$command = "/usr/bin/local/pdflatex -output-directory=$latex_directory $tex_file_path 2>&1";
 $command_output = '';
 try {
     exec($command, $command_output_lines);
