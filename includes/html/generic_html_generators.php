@@ -123,10 +123,14 @@ function generate_form_select(
     string $id,
     string $label,
     HtmlFormOptions $options,
-    int $selected=-1
+    int $selected=-1,
+    bool $readonly=False
 ) : string
 {
     $attributes = ['id' => $id, 'name' => $id];
+    if ($readonly) {
+        $attributes['readonly'] = Null;
+    }
     $options_string = generate_form_options($options, $selected);
     return "<div>"
         . generate_form_label($id, $label)

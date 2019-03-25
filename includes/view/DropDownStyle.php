@@ -11,9 +11,16 @@ require_once __DIR__ . '/Style.php';
 require_once __DIR__ . '/../html/utils.php';
 
 class DropDownStyle extends Style {
+    public $options;
 
-    public function __construct() {
-
+    public function __construct(
+        string $name,
+        string $value,
+        HtmlFormOptions $options,
+        bool $readonly=False
+    ) {
+        parent::__construct($name, $value, $readonly);
+        $this->options = $options;
     }
 
     public function generate_html(): String {
@@ -31,4 +38,5 @@ class DropDownStyle extends Style {
             $readonly
         );
     }
+
 }

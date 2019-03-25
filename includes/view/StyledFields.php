@@ -37,19 +37,19 @@ require_once __DIR__ . '/TextStyle.php';
 // is dangerously hardcoded here. It does not harm the current application
 // since it expects to have a id field as a primary key for every table. But
 // for generalization this should be outsourced to a higher level. There could
-// be a part general rules and exceptions for primary keys, timestamps, et
-// cetera could be managed.
+// be a part defining general rules and exceptions for primary keys, timestamps,
+// et cetera could be managed.
 
 
 class StyledFields {
-    public $record;
-
+    private $record;
     private $fields = array();
 
     public function __construct(Record $record) {
         $this->record = $record;
         foreach ($this->record->get_fields() as $field_name => $field_value) {
             $readonly = ($field_name === 'id');
+            $field_value = $field_value ?? '';
             $styled_field = new TextStyle($field_name, $field_value, $readonly);
             $this->fields[$field_name] = $styled_field;
         }
@@ -64,10 +64,19 @@ class StyledFields {
         return $str;
     }
 
-    public function set_field_readonly($field_name) {
+    public function set_field_readonly(string $field_name) {
         $field = $this->fields[$field_name];
         /** @var TextStyle $field */
         $field->readonly = True;
     }
 
+    public function field_style(string $field_name, Style $style) {
+        $this->fields[$field_name] = $style;
+    }
+
+    public function get_value_of_field(string $field_name) {
+        $field = $this->fields[$field_name];
+        /** @var Style $field */
+        return $field->value;
+    }
 }

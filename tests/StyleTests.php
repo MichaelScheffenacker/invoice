@@ -52,6 +52,10 @@ class StyleTests extends TestCase {
         $expected_html =
             generate_form_select('one', 'one', $options)
             . generate_text_input('two', 'two');
-
+        $styled_record = new StyledFields(new TestRecord());
+        $one_value = $styled_record->get_value_of_field('one');
+        $drop_down_one = new DropDownStyle('one', $one_value, $options);
+        $styled_record->field_style('one', $drop_down_one);
+        $this->assertSame($expected_html, $styled_record->generate_html());
     }
 }
