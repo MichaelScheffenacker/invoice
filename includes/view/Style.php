@@ -7,5 +7,19 @@
  * Time: 19:13
  */
 abstract class Style {
-    abstract public function generate_html() : String;
+    public $name;
+    public $value;
+    public $readonly;
+
+    public function __construct(
+        string $name,
+        string $value,
+        bool $readonly=False
+    ) {
+        $this->name = $name;
+        $this->value = $value;
+        $this->readonly = $readonly;
+    }
+
+    abstract public function generate_html() : string;
 }

@@ -12,16 +12,6 @@ require_once __DIR__ . '/../html/utils.php';
 
 class TextStyle extends Style {
 
-    public $name;
-    public $value;
-    public $readonly;
-
-    public function __construct(string $name, $value, bool $readonly=False) {
-        $this->name = $name;
-        $this->value = $value;
-        $this->readonly = $readonly;
-    }
-
     public function generate_html(): string {
         $id = $this->name;
         $label = $this->name;
