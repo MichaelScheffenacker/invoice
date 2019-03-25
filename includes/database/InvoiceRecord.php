@@ -6,8 +6,8 @@
  * Time: 00:00
  */
 
-require_once 'Record.php';
-require_once 'includes/html/utils.php';
+require_once __DIR__ . '/Record.php';
+require_once __DIR__ . '/../../includes/html/utils.php';
 
 class InvoiceRecord extends  Record {
     public $id;

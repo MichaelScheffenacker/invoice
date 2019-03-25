@@ -18,7 +18,7 @@ $db = new Database();
 $invoices = $db->get_invoices();
 
 $row_edit = function (InvoiceRecord $invoice) : array {
-    $row = $invoice->get_properties();
+    $row = $invoice->get_fields();
     $href_create = "create_invoice.php?invoice_id=$invoice->id";
     $href_edit = "edit_invoice.php?invoice_id=$invoice->id";
     $row[] = "<a href='$href_create' class='text-button'> [pdf] </a>";

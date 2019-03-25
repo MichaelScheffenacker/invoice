@@ -6,7 +6,7 @@
  * Time: 19:45
  */
 
-require_once 'includes/html/utils.php';
+require_once __DIR__ . '/../../includes/html/utils.php';
 
 class Record
 {
@@ -22,17 +22,17 @@ class Record
     {
     }
 
-    public static function get_property_names() : array {
+    public static function get_field_names() : array {
         return array_keys(get_class_vars(static::class));
     }
 
-    public function get_properties() : array  {
+    public function get_fields() : array  {
         return get_object_vars($this);
     }
 
     public static function construct_by_alien_array(array $array) : Record {
         $record = new static();
-        $properties = self::get_property_names();
+        $properties = self::get_field_names();
         foreach ($properties as $property) {
             $record->$property = $array[$property] ?? '';
         }

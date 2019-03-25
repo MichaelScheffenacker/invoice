@@ -6,9 +6,9 @@
  * Time: 17:49
  */
 
-require_once 'includes/database/Database.php';
-require_once 'includes/database/LineItemRecord.php';
-require_once 'generic_html_generators.php';
+require_once __DIR__ . '/../database/Database.php';
+require_once __DIR__ . '/../database/LineItemRecord.php';
+require_once __DIR__ . '/generic_html_generators.php';
 
 function print_table(array $matrix, callable $row_edit, int $tabs=0) {
     $header_row = array_keys(call_user_func($row_edit, $matrix[0]));
@@ -41,33 +41,6 @@ function print_tr(array $row, callable $cell_transformation, int $tabs=0) {
 function print_wtabs(string $printee, int $tabs) {
     print str_repeat("\t", $tabs) . $printee;
 }
-
-function print_form(Record $record) {
-    $properties = $record::get_property_names();
-    print "<form action='' method='POST'>";
-    foreach ($properties as $property) {
-        print_form_input($property, $property, $record->$property ?? '');
-    }
-    print "<div> <input type='submit' value='save'></div> </form>\n";
-}
-
-function print_form_input(
-    string $id,
-    string $label,
-    string $value='',
-    string $type='text',
-    bool $readonly=false
-) {
-    $dis = $readonly ? 'readonly' : '';
-    print
-        "<div> " .
-        generate_form_label($id, $label) .
-        " <input id='$id' type='$type' name='$id' value='$value' $dis> " .
-        "</div>\n";
-}
-
-
-
 
 function generate_lineitem_input_element(int $number, string $class, $value) {
     $attributes = array(

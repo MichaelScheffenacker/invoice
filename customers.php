@@ -63,7 +63,7 @@ $row_edit = function (CustomerRecord $customer) : array {
         'phone_mobile',
         'mail'
     ]);
-    $row = array_diff_key($customer->get_properties(), $removees);
+    $row = array_diff_key($customer->get_fields(), $removees);
     $href_edit = "edit_customer.php?id=$customer->id";
     $row[] = "<a href='$href_edit' class='text-button'> [edit] </a>";
     return $row;

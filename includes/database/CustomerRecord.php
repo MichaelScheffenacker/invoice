@@ -6,9 +6,9 @@
  * Time: 00:04
  */
 
-require_once 'Record.php';
-require_once 'utils.php';
-require_once 'includes/html/utils.php';
+require_once __DIR__ . '/Record.php';
+require_once __DIR__ . '/utils.php';
+require_once __DIR__ . '/../html/utils.php';
 
 class CustomerRecord extends Record
 {

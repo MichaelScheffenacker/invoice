@@ -66,16 +66,34 @@ require 'includes/html/head.php';
 <h1>Rechnung Editieren</h1>
 <form action="" method="POST">
     <?php
-    print_form_input('id', 'Database ID', $invoice_id, 'text',true);
-    print_form_input('invoice_date', 'Rechnungsdatum', $invoice->invoice_date ?? '');
-    print_form_input('invoice_number', 'Rechnungsnummer', $invoice_number);
-    print_form_select(
+    print generate_form_input(
+            'id',
+            'Database ID',
+            $invoice_id,
+            'text',
+            true
+    );
+    print generate_form_input(
+            'invoice_date',
+            'Rechnungsdatum',
+            $invoice->invoice_date ?? ''
+    );
+    print generate_form_input(
+            'invoice_number',
+            'Rechnungsnummer',
+            $invoice_number
+    );
+    print generate_form_select(
             'customer_id',
             'Kunde',
             $customer_options,
             $invoice->customer_id ?? -1
     );
-    print_form_input('reference', 'Referenz/Zweck', $invoice->reference ?? '');
+    print generate_form_input(
+            'reference',
+            'Referenz/Zweck',
+            $invoice->reference ?? ''
+    );
     ?>
 
     <div><h2>Leistungen: </h2><p id="add_lineitem_button" class="text-button">[add]</p>
