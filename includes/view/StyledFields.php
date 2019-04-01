@@ -70,11 +70,17 @@ class StyledFields {
         $field->readonly = True;
     }
 
+    public function set_field_value(string $field_name, string $value) {
+        $field = $this->fields[$field_name];
+        /** @var TextStyle $field */
+        $field->value = $value;
+    }
+
     public function field_style(string $field_name, Style $style) {
         $this->fields[$field_name] = $style;
     }
 
-    public function get_value_of_field(string $field_name) {
+    public function get_field_value(string $field_name) {
         $field = $this->fields[$field_name];
         /** @var Style $field */
         return $field->value;
