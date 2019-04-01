@@ -62,11 +62,16 @@ foreach ($linetems as $lineitem) {
     $price = eur_price($lineitem->price);
     $invoice_items .= "\multicolumn{2}{@{}l@{}}{ $lineitem->description } &  & $price \\\\\n";
 }
-$tax = $sum_net * 0.2;
-$sum_gross = $sum_net * 1.2;
+$reverse_charge = ($customer->country === 'Deutschland');
+$tax_rate = $reverse_charge ? 0 : 0.2;
+$tax = $sum_net * $tax_rate;
+$tax_percent = $tax_rate * 100;
+$sum_gross = $sum_net * (1 + $tax_rate);
 $f_tax = eur_price($tax);
 $f_sum_net = eur_price($sum_net);
 $f_sum_gross = eur_price($sum_gross);
+$reverse_charge_text = ($reverse_charge) ? 'Umkehr der Steuerschuld (Reverse Charge).' : '';
+
 
 
 ### file name definitions ###

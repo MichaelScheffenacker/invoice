@@ -68,15 +68,17 @@ Leistung & & & Betrag \\
 
 \hline
 Summe Netto & & & <?php echo $f_sum_net ?> \\
- 20 \% USt.&  &  & <?php echo $f_tax ?> \\
+ <?php echo $tax_percent ?>\,\% USt.&  &  & <?php echo $f_tax ?> \\
  \hline
  & \textbf{Summe brutto} & \textbf{<?php echo $f_sum_gross ?>} &  \\
  \end{tabularx}
 
  \vspace*{1cm}
  
-Hiermit stelle ich Ihnen den Betrag von <?php echo $f_sum_gross ?> in Rechnung.
+{Hiermit stelle ich Ihnen den Betrag von <?php echo $f_sum_gross ?> in Rechnung.
 Zahlbar innerhalb von 14 Tagen.
+<?php echo $reverse_charge_text ?>}
+
 
 Kontoinhaber: Michael Scheffenacker\\
 Bankinstitut: Hypo Tirol Bank\\
