@@ -3,3 +3,6 @@
 .idea/
 config.php
 setup_user.sql
+composer.*
+*.cache
+vendor/
