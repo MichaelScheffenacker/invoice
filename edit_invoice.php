@@ -47,6 +47,7 @@ if (array_key_exists('invoice_id', $_GET)) {
     $lineitems = $db->get_lineitem_by_invoice_id($invoice_id);
 }
 else {
+    $invoice = new InvoiceRecord();
     $invoice_id = $db->get_last_invoice_id() + 1;
 }
 
@@ -58,19 +59,27 @@ $extract_customer_id = function (CustomerRecord $customer) {
 $extract_customer_name = function (CustomerRecord $customer) {
     return "$customer->forename $customer->surname";
 };
+
+$invoice_date = $invoice->invoice_date ?? date('Y-m-d');
+$reference = $invoice->reference ?? '';
+
 $customer_options = new HtmlFormOptions(
     $customers,
     $extract_customer_id,
     $extract_customer_name
 );
+$drop_down_customers = new DropDownStyle(
+    'customer_id',
+    '',
+    $customer_options
+);
 
 $styled_record = new StyledFields($invoice);
-$drop_down_customers = new DropDownStyle(
-        'customers',
-        '',
-        $customer_options
-);
-$styled_record->field_style('customer', $drop_down_customers);
+$styled_record->set_field_value('id', $invoice_id);
+$styled_record->set_field_value('invoice_number', $invoice_number);
+$styled_record->set_field_value('invoice_date', $invoice_date);
+$styled_record->field_style('customer_id', $drop_down_customers);
+$styled_record->set_field_value('reference', $reference);
 
 
 require 'includes/html/head.php';
