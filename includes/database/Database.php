@@ -100,26 +100,9 @@ class Database
     }
 
     public function upsert_customer(CustomerRecord $customer) {
-        $properties = get_object_vars($customer);
-        $prop_names = array_keys($properties);
-        $insert_columns_string = implode(", ", array_map_wrap('`', $prop_names));
-        $insert_place_h = array_map_prefix(':ins_', $prop_names);
-        $insert_place_h_string = implode(", ", $insert_place_h);
-        $insert_array = array_combine($insert_place_h, $properties);
-
-        $update_prop = array_diff_key($properties, array('id' => null));
-        $update_prop_names = array_keys($update_prop);
-        $update_columns = array_map_wrap('`', $update_prop_names);
-        $update_place_h = array_map_prefix(':up_', $update_prop_names);
-        $update_string = implode(", ", array_map_meld('=', $update_columns, $update_place_h));
-        $update_array = array_combine($update_place_h, $update_prop);
-
-        $execute_array = array_merge($insert_array, $update_array);
-
-        $stmt = $this->pdo->prepare(
-            "INSERT INTO customers ($insert_columns_string) VALUES ($insert_place_h_string) ".
-            " ON DUPLICATE KEY UPDATE $update_string"
-        );
+        $sql = generate_upsert_sql('customer', $customer);
+        $execute_array = create_upsert_execute_array($customer);
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute($execute_array);
     }
 
