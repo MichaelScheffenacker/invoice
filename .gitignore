@@ -3,3 +3,8 @@
 .idea/
 config.php
 setup_user.sql
+*.cache
+*.lock
+*.phar
+.DS_Store
+vendor/
