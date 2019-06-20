@@ -26,6 +26,37 @@ class Database
         );
     }
 
+    public function select_records(string $table) : array {
+        $sql = "SELECT * FROM $table";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':table' => $table]);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $table);
+        return $stmt->fetchAll();
+    }
+
+    public function select_record_by_id(string $table, int $id) : Record {
+        $sql = "SELECT * FROM $table WHERE id = :id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute([':id' => $id]);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $table);
+        return $stmt->fetch();
+    }
+
+    public function upsert_record(string $table, Record $record) : void {
+        $sql = generate_upsert_sql($table, $record);
+        $execute_array = create_upsert_execute_array($record);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($execute_array);
+    }
+
+    public function select_last_record_id(string $table): Record {
+        $sql = "SELECT id FROM $table ODER BY id DESC LIMIT 1";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $table);
+        return $stmt->fetch()['id'];
+    }
+
     public function get_invoices() {
         $result = $this->pdo->prepare('SELECT * FROM invoices ORDER BY invoice_number DESC ');
         $result->execute();
@@ -100,10 +131,7 @@ class Database
     }
 
     public function upsert_customer(CustomerRecord $customer) {
-        $sql = generate_upsert_sql('customer', $customer);
-        $execute_array = create_upsert_execute_array($customer);
-        $stmt = $this->pdo->prepare($sql);
-        $stmt->execute($execute_array);
+        $this->upsert_record('customer', $customer);
     }
 
     public function get_last_customer_id() {
