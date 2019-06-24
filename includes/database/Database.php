@@ -12,9 +12,19 @@ require_once __DIR__ . '/InvoiceRecord.php';
 require_once __DIR__ . '/LineItemRecord.php';
 require_once __DIR__ . '/../../config.php';
 
+class Table {
+    public $name;
+    public $class;
+    public function __construct($name, $class) {
+        $this->name = $name;
+        $this->class = $class;
+    }
+}
+
 class Database
 {
     private $pdo;
+    private $invoice_table;
 
     public function __construct()
     {
@@ -24,21 +34,27 @@ class Database
             $config->database['username'],
             $config->database['passwd']
         );
+
+        $this->invoice_table = new Table(
+            'invoices',
+            'InvoiceRecord'
+        );
+
     }
 
-    public function select_records(string $table) : array {
-        $sql = "SELECT * FROM $table";
+    public function select_records(Table $table) : array {
+        $sql = "SELECT * FROM $table->name";
         $stmt = $this->pdo->prepare($sql);
-        $stmt->execute([':table' => $table]);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $table);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $table->class);
         return $stmt->fetchAll();
     }
 
-    public function select_record_by_id(string $table, int $id) : Record {
-        $sql = "SELECT * FROM $table WHERE id = :id";
+    public function select_record_by_id(Table $table, int $id) : Record {
+        $sql = "SELECT * FROM $table->name WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $table);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $table->class);
         return $stmt->fetch();
     }
 
@@ -58,21 +74,12 @@ class Database
     }
 
     public function get_invoices() {
-        $result = $this->pdo->prepare('SELECT * FROM invoices ORDER BY invoice_number DESC ');
-        $result->execute();
-        $result->setFetchMode(PDO::FETCH_CLASS, 'InvoiceRecord');
-        $invoices = $result->fetchAll();
-        return $invoices;
+//        'SELECT * FROM invoices ORDER BY invoice_number DESC '
+        return $this->select_records($this->invoice_table);
     }
 
     public function get_invoice_by_id($id) {
-        $stmt = $this->pdo->prepare('SElECT * FROM invoices WHERE id = :id');
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_CLASS, 'InvoiceRecord');
-        /* @var $invoice InvoiceRecord */
-        $invoice = $stmt->fetch();
-        return $invoice;
+        return $this->select_record_by_id($this->invoice_table, $id);
     }
 
     public function upsert_invoice($id, $invoice_number, $invoice_date, $customer_id, $reference) {
