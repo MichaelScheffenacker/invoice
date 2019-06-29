@@ -10,9 +10,8 @@
 
 class Config {
     public $database = array(
-        'dsn' => 'mysql:host=localhost;dbname=bills;charset=utf8mb4',
-        'username' => 'bills',
+        'dsn' => 'mysql:host=localhost;dbname=invoice;charset=utf8mb4',
+        'username' => 'invoice',
         'passwd' => ''  // replace with local password
     );
 }
-

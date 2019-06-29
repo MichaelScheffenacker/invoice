@@ -1,9 +1,9 @@
-DROP DATABASE IF EXISTS bills;
-CREATE DATABASE bills
+DROP DATABASE IF EXISTS invoice;
+CREATE DATABASE invoice
     DEFAULT CHARACTER SET utf8mb4
     DEFAULT COLLATE utf8mb4_unicode_ci;
 
-USE bills;
+USE invoice;
 
 CREATE TABLE customers (
     id INT(11) NOT NULL AUTO_INCREMENT,
