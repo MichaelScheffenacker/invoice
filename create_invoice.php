@@ -7,6 +7,7 @@
  */
 
 require_once 'includes/database/Database.php';
+require_once 'config.php';
 $error_outputs ='';
 $db = new Database();
 
@@ -88,6 +89,8 @@ $tex_file_path = $latex_directory . $tex_file_name;
 $pdf_file_path = $latex_directory . $pdf_file_name;
 $pdf_file_url = '.' . $relative_path . $pdf_file_name;
 
+$config = new Config();
+
 
 ### latex ###
 
@@ -107,7 +110,7 @@ catch (Exception $e) {
     $error_outputs .= "Writing of <code>$tex_file_path</code> file failed.\n";
 }
 
-$command = "/usr/bin/local/pdflatex -output-directory=$latex_directory $tex_file_path 2>&1";
+$command = "$config->pdflatex_path -output-directory=$latex_directory $tex_file_path 2>&1";
 $command_output = '';
 try {
     exec($command, $command_output_lines);

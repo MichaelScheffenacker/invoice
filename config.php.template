@@ -14,4 +14,6 @@ class Config {
         'username' => 'invoice',
         'passwd' => ''  // replace with local password
     );
+    public $pdflatex_path = '/usr/bin/pdf';  // Ubuntu
+    //public $pdflatex_path = '/usr/bin/local/pdflatex';  // MacOS
 }
