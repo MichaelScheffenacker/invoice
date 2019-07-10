@@ -65,12 +65,16 @@ class Database
         $stmt->execute($execute_array);
     }
 
-    public function select_last_record_id(string $table): Record {
-        $sql = "SELECT id FROM $table ODER BY id DESC LIMIT 1";
+    public function select_last_record(Table $table) {
+        $sql = "SELECT id FROM $table->name ORDER BY id DESC LIMIT 1";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $table);
-        return $stmt->fetch()['id'];
+        $stmt->setFetchMode(PDO::FETCH_CLASS, 'InvoiceRecord');
+        return $stmt->fetch();
+    }
+
+    public function select_last_record_id(Table $table) : int {
+        return $this->select_last_record($table)->id;
     }
 
     public function get_invoices() {
