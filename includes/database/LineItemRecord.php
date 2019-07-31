@@ -6,7 +6,9 @@
  * Time: 00:11
  */
 
-class LineItemRecord
+require_once __DIR__ . '/Record.php';
+
+class LineItemRecord extends Record
 {
     public $id;
     public $invoice_id;

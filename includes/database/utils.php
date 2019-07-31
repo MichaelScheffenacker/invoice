@@ -6,35 +6,117 @@
  * Time: 21:49
  */
 
+/*
+ * A prepared statement can only handle different identifiers
+ * in an combined statement, like the upsert statement, even
+ * if they represent the same value. This means the identifiers
+ * of an upsert have to be prefixed for for the insert part and
+ * for the update part. But of course those identifiers have to
+ * have matching prefixes in the SQL statement and the execute
+ * array for the prepared statement.
+ *
+ * tl;dr Just use the prefix constants for the upsert.
+ */
 
-function generate_upsert_sql(string $table, Record $record) {
-    $columns_string = implode_column_names($record);
-    $insert_string = implode_insert_place_holders($record);
-    $update_string = implode_update_fields($record);
+const insert_prefix = ':ins_';
+const update_prefix = ':up_';
+
 //    todo: whitelist $table names
+class Table {
+    public $name;
+    public $class;
+    public function __construct($name, $class) {
+        $this->name = $name;
+        $this->class = $class;
+    }
+}
+
+function generate_upsert_sql(Table $table, Record $record) : string {
+    /*
+     * Upserts utilize the id (primary key) in the insert part
+     * to identify possible duplicates and forward the request
+     * to the update part. But in this case the update part does
+     * require not to include the id. (Absurdly this is just the 
+     * opposite from what insert and update alone would require.)
+     */
+    
+    $fields = $record->get_fields();
+    $update_fields = subtract_id($fields);
+    
+    $columns_string = implode_columns($fields);
+    $insert_string = implode_insert_place_holders($fields);
+    $update_string = implode_update_fields($update_fields);
     return
-        "INSERT INTO $table ($columns_string) VALUES ($insert_string) "
+        "INSERT INTO $table->name ($columns_string) VALUES ($insert_string) "
         . "ON DUPLICATE KEY UPDATE $update_string";
 }
 
+function generate_insert_sql(Table $table, Record $record) : string {
+    /*
+     * Inserts ignore the id (primary key), they utilize 
+     * auto increment.
+     */
+    $fields = subtract_id($record->get_fields());
+    $columns_string = implode_columns($fields);
+    $insert_string = implode_insert_place_holders($fields);
+    return
+        "INSERT INTO $table->name ($columns_string) VALUES ($insert_string)";
+}
+
 function create_upsert_execute_array(Record $record) : array {
-    $insert_array = create_insert_execute_array($record);
-    $update_array = create_update_execute_array($record);
+    $fields = $record->get_fields();
+    $update_fields = subtract_id($fields);
+    
+    $insert_array = create_execute_array(insert_prefix, $fields);
+    $update_array = create_execute_array(update_prefix, $update_fields);
     $execute_array = array_merge($insert_array, $update_array);
     return $execute_array;
 }
 
 function create_insert_execute_array(Record $record) : array {
-    $place_holders = create_prefixed_insert_fields($record);
-    $values = create_insert_values($record);
-    return array_combine($place_holders, $values);
+    $fields = subtract_id($record->get_fields());
+    return create_execute_array(insert_prefix, $fields);
 }
 
-function create_update_execute_array(Record $record) : array {
-    $place_holders = create_prefixed_update_fields($record);
-    $values = create_update_values($record);
-    return array_combine($place_holders, $values);
+function create_execute_array(string $prefix, array $fields) : array {
+    $columns = array_keys($fields);
+    $place_holders = array_map_prefix($prefix, $columns);
+    return array_combine($place_holders, $fields);
 }
+
+function implode_columns(array $fields) : string {
+    $columns = array_keys($fields);
+    $quoted_field_names = quote_columns($columns);
+    return implode(', ', $quoted_field_names);
+}
+
+function implode_insert_place_holders(array $fields): string {
+    $fields_names = array_keys($fields);
+    $identifiers = array_map_prefix(insert_prefix, $fields_names);
+    return implode(', ', $identifiers);
+}
+
+function implode_update_fields(array $fields): string {
+    $columns = array_keys($fields);
+    $quoted_columns = quote_columns($columns);
+    $place_holders = array_map_prefix(update_prefix, $columns);
+    $update_fields = array_map_meld('=', $quoted_columns, $place_holders);
+    return implode(", ", $update_fields);
+}
+
+
+function subtract_id(array $fields): array {
+    return array_diff_key($fields, ['id' => null]);
+}
+
+function quote_columns(array $columns) : array {
+    return array_map_wrap('`', $columns);
+}
+
+function prefix_identifiers(array $fields): array {
+    return array_map_prefix(':ins_', $fields);
+}
+
 
 function array_map_meld(string $glue, array $array1, array $array2) : array {
     return array_map(
@@ -56,77 +138,4 @@ function array_map_wrap(string $wrapper, array $array) : array {
         function ($el) use ($wrapper) { return $wrapper . $el . $wrapper; },
         $array
     );
-}
-
-function implode_column_names(Record $record) : string {
-    $field_names = $record::get_field_names();
-    $quoted_field_names = quote_columns($field_names);
-    return implode(', ', $quoted_field_names);
-}
-
-function quote_columns(array $columns) : array {
-    return array_map_wrap('`', $columns);
-}
-
-function implode_insert_place_holders(Record $record): string {
-    $fields_names = create_raw_insert_fields($record);
-    $identifiers = prefix_insert_identifiers($fields_names);
-    return implode(', ', $identifiers);
-}
-
-function create_raw_insert_fields(Record $record): array {
-    return $record::get_field_names();
-}
-
-function create_insert_values(Record $record): array {
-    return$record->get_fields();
-}
-
-function prefix_insert_identifiers(array $fields): array {
-    return array_map_prefix(':ins_', $fields);
-}
-
-function create_prefixed_insert_fields(Record $record) {
-    $field_names = create_raw_insert_fields($record);
-    return prefix_insert_identifiers($field_names);
-}
-
-function prefix_update_identifiers(array $fields): array {
-    return array_map_prefix(':up_', $fields);
-}
-
-function implode_update_fields(Record $record): string {
-    $update_fields = create_update_fields($record);
-    return implode(", ", $update_fields);
-}
-
-function create_raw_update_fields(Record $record): array {
-    $fields = create_filtered_update_fields($record);
-    return array_keys($fields);
-}
-
-function create_update_values(Record $record) {
-    $fields = create_filtered_update_fields($record);
-    return array_values($fields);
-}
-
-function create_filtered_update_fields(Record $record): array {
-    $fields = $record->get_fields();
-    return array_diff_key($fields, ['id' => null]);
-}
-
-function create_update_fields(Record $record) : array {
-    $columns = create_quoted_columns($record);
-    $place_holders = create_prefixed_update_fields($record);
-    return array_map_meld('=', $columns, $place_holders);
-}
-
-function create_quoted_columns(Record $record) {
-    $field_names = create_raw_update_fields($record);
-    return quote_columns($field_names);
-}
-
-function create_prefixed_update_fields(Record $record) {
-    $field_names = create_raw_update_fields($record);
-    return prefix_update_identifiers($field_names);
 }

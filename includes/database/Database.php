@@ -12,19 +12,13 @@ require_once __DIR__ . '/InvoiceRecord.php';
 require_once __DIR__ . '/LineItemRecord.php';
 require_once __DIR__ . '/../../config.php';
 
-class Table {
-    public $name;
-    public $class;
-    public function __construct($name, $class) {
-        $this->name = $name;
-        $this->class = $class;
-    }
-}
+
 
 class Database
 {
     private $pdo;
-    private $invoice_table;
+    public $invoice_table;
+    public $lineitem_table;
 
     public function __construct()
     {
@@ -38,6 +32,11 @@ class Database
         $this->invoice_table = new Table(
             'invoices',
             'InvoiceRecord'
+        );
+
+        $this->lineitem_table = new Table(
+            'lineitems',
+            'LineItemRecord'
         );
 
     }
@@ -58,8 +57,24 @@ class Database
         return $stmt->fetch();
     }
 
-    public function upsert_record(string $table, Record $record) : void {
-        $sql = generate_upsert_sql($table, $record);
+    public function insert_record(Table $table, Record $record) {
+        $sql = generate_insert_sql($table, $record);
+        $execute_array = create_insert_execute_array($record);
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->execute($execute_array);
+//        print $sql . "\n";
+//        print_r($execute_array);
+//        if ($result === false) {
+//            print "ir() t\n";
+//        } else {
+//            print $this->pdo->errorCode() . "\n";
+//            print_r($this->pdo->errorInfo());
+//        };
+    }
+
+    public function upsert_record(Table $table, Record $record) : void {
+        $sql = generate_upsert_sql($table->name, $record);
+        print $sql . "\n";
         $execute_array = create_upsert_execute_array($record);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($execute_array);
@@ -86,26 +101,27 @@ class Database
         return $this->select_record_by_id($this->invoice_table, $id);
     }
 
-    public function upsert_invoice($id, $invoice_number, $invoice_date, $customer_id, $reference) {
-        $stmt = $this->pdo->prepare(
-            'INSERT INTO invoices (id, invoice_number, invoice_date, customer_id, reference) ' .
-            '             VALUES (:id, :ins_invoice_number, :ins_invoice_date, :ins_customer_id, :ins_reference)' .
-            '         ON DUPLICATE KEY UPDATE invoice_number=:up_invoice_number, invoice_date=:up_invoice_date,' .
-            '             customer_id=:up_customer_id, reference=:up_reference'
-        );
-
-        $stmt->execute(array(
-            ':id' => $id,
-            ':ins_invoice_date' => $invoice_date,
-            ':ins_invoice_number' => $invoice_number,
-            ':ins_customer_id' => $customer_id,
-            ':ins_reference' => $reference,
-            ':up_invoice_date' => $invoice_date,
-            ':up_invoice_number' => $invoice_number,
-            ':up_customer_id' => $customer_id,
-            ':up_reference' => $reference
-        ));
-        return $stmt->errorInfo();
+    public function upsert_invoice(InvoiceRecord $invoice) {
+//        $stmt = $this->pdo->prepare(
+//            'INSERT INTO invoices (id, invoice_number, invoice_date, customer_id, reference) ' .
+//            '             VALUES (:id, :ins_invoice_number, :ins_invoice_date, :ins_customer_id, :ins_reference)' .
+//            '         ON DUPLICATE KEY UPDATE invoice_number=:up_invoice_number, invoice_date=:up_invoice_date,' .
+//            '             customer_id=:up_customer_id, reference=:up_reference'
+//        );
+//
+//        $stmt->execute(array(
+//            ':id' => $id,
+//            ':ins_invoice_date' => $invoice_date,
+//            ':ins_invoice_number' => $invoice_number,
+//            ':ins_customer_id' => $customer_id,
+//            ':ins_reference' => $reference,
+//            ':up_invoice_date' => $invoice_date,
+//            ':up_invoice_number' => $invoice_number,
+//            ':up_customer_id' => $customer_id,
+//            ':up_reference' => $reference
+//        ));
+//        return $stmt->errorInfo();
+        $this->upsert_record($this->invoice_table, $invoice);
     }
 
     public function get_last_invoice_id() {
@@ -167,14 +183,20 @@ class Database
         $stmt->execute();
     }
 
-    public function insert_lineitem($invoice_id, $description, $price) {
-        $stmt = $this->pdo->prepare(
-            'INSERT INTO lineitems (invoice_id, description, price) ' .
-            'VALUES (:invoice_id, :description, :price)'
-        );
-        $stmt->bindParam(':invoice_id', $invoice_id);
-        $stmt->bindParam(':description', $description);
-        $stmt->bindParam(':price', $price);
+    public function insert_lineitem(LineItemRecord $record) {
+//        $stmt = $this->pdo->prepare(
+//            'INSERT INTO lineitems (invoice_id, description, price) ' .
+//            'VALUES (:invoice_id, :description, :price)'
+//        );
+//        $stmt->bindParam(':invoice_id', $invoice_id);
+//        $stmt->bindParam(':description', $description);
+//        $stmt->bindParam(':price', $price);
+//        $stmt->execute();
+        return $this->insert_record($this->lineitem_table, $record);
+    }
+
+    public function execute($sql) {
+        $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
     }
 
