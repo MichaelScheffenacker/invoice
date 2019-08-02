@@ -35,4 +35,27 @@ class DatabaseTest extends TestCase {
         $this->assertIsNumeric($id);
     }
 
+    public function test_insert_record() {
+        $invoice = InvoiceRecord::construct_by_alien_array([
+            'invoice_number' => '5',
+            'invoice_date' => '2020-01-01',
+            'customer_id' => '1',
+            'reference' => 'test2'
+        ]);
+        $this->db->insert_record($this->db->invoice_table, $invoice);
+        $this->assertSame(1, 1);
+    }
+
+    public function test_insert_lineitem() {
+        $db = new Database();
+        $lineitem = LineItemRecord::construct_by_alien_array([
+            'invoice_id' => '1',
+            'description' => 'unit_test',
+            'price' => '333'
+        ]);
+        $db->insert_lineitem($lineitem);
+        print_r($lineitem);
+        $this->assertSame(1, 1);
+    }
+
 }
