@@ -71,8 +71,7 @@ class Database
     }
 
     public function upsert_record(Table $table, Record $record) : void {
-        $sql = generate_upsert_sql($table->name, $record);
-        print $sql . "\n";
+        $sql = generate_upsert_sql($table, $record);
         $execute_array = create_upsert_execute_array($record);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($execute_array);
@@ -137,7 +136,7 @@ class Database
     }
 
     public function upsert_customer(CustomerRecord $customer) {
-        $this->upsert_record('customer', $customer);
+        $this->upsert_record($this->customer_table, $customer);
     }
 
     public function get_last_customer_id() {
