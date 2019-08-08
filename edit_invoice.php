@@ -88,7 +88,7 @@ $customer_options = new HtmlFormOptions(
 $styled_record = new StyledFields($invoice);
 $drop_down_customers = new DropDownStyle(
         'customer_id',
-        '',
+        $invoice->customer_id,
         $customer_options
 );
 $styled_record->field_style('customer_id', $drop_down_customers);

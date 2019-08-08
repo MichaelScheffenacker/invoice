@@ -26,15 +26,14 @@ class DropDownStyle extends Style {
     public function generate_html(): String {
         $id = $this->name;
         $label = $this->name;
-        $value = $this->value ?? '';
+        $value = $this->value ?? -1;
         $options = $this->options;
         $readonly = $this->readonly;
-//        todo: change selected from default -1 to actual
         return generate_form_select(
             $id,
             $label,
             $options,
-            -1,
+            $value,
             $readonly
         );
     }
