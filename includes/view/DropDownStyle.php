@@ -15,7 +15,7 @@ class DropDownStyle extends Style {
 
     public function __construct(
         string $name,
-        string $value,
+        $value,
         HtmlFormOptions $options,
         bool $readonly=False
     ) {

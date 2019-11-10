@@ -13,7 +13,7 @@ abstract class Style {
 
     public function __construct(
         string $name,
-        string $value,
+        $value,
         bool $readonly=False
     ) {
         $this->name = $name;
