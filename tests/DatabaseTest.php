@@ -54,7 +54,6 @@ class DatabaseTest extends TestCase {
             'price' => '333'
         ]);
         $db->insert_lineitem($lineitem);
-        print_r($lineitem);
         $this->assertSame(1, 1);
     }
 
