@@ -20,7 +20,7 @@ if (array_key_exists('id', $_POST)) {
 }
 
 if (array_key_exists('id', $_GET)) {
-    $customer = $db->get_customer_by_id($_GET['id']);
+    $customer = $db->select_customer_by_id($_GET['id']);
 }
 else {
     $customer = new CustomerRecord();

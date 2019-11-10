@@ -12,7 +12,7 @@ require_once 'includes/view/StyledFields.php';
 require_once 'includes/view/DropDownStyle.php';
 
 $db = new Database();
-$customers = $db->get_customers();
+$customers = $db->select_customers();
 
 /**
  * @param Database $db
@@ -61,7 +61,7 @@ if (array_key_exists('id', $_POST)) {
 
     if (array_key_exists('invoice_id', $_GET)) {
         $invoice_id = $_GET['invoice_id'];
-        $invoice = $db->get_invoice_by_id($invoice_id);
+        $invoice = $db->select_invoice_by_id($invoice_id);
         $lineitems = $db->get_lineitem_by_invoice_id($invoice_id);
     }
     else {

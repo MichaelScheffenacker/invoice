@@ -15,7 +15,7 @@ echo "<h1>Rechnungen</h1>";
 echo "<p><a href='edit_invoice.php' class='text-button'> [new] </a></p>\n";
 
 $db = new Database();
-$invoices = $db->get_invoices();
+$invoices = $db->select_invoices();
 
 $row_edit = function (InvoiceRecord $invoice) : array {
     $row = $invoice->get_fields();

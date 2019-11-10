@@ -89,12 +89,12 @@ class Database
         return $this->select_last_record($table)->id;
     }
 
-    public function get_invoices() {
+    public function select_invoices() {
 //        'SELECT * FROM invoices ORDER BY invoice_number DESC '
         return $this->select_records($this->invoice_table);
     }
 
-    public function get_invoice_by_id($id) {
+    public function select_invoice_by_id($id) {
         return $this->select_record_by_id($this->invoice_table, $id);
     }
 
@@ -117,22 +117,12 @@ class Database
         return $last_invoice_number;
     }
 
-    public function get_customers() {
-        $stmt = $this->pdo->prepare('SELECT * FROM customers');
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_CLASS, 'CustomerRecord');
-        $customers = $stmt->fetchAll();
-        return $customers;
+    public function select_customers() {
+        return $this->select_records($this->customer_table);
     }
 
-    public function get_customer_by_id($id) {
-        $stmt = $this->pdo->prepare('SELECT * FROM customers WHERE id = :id');
-        $stmt->bindParam(':id', $id);
-        $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_CLASS, 'CustomerRecord');
-        /* @var $customer CustomerRecord */
-        $customer = $stmt->fetch();
-        return $customer;
+    public function select_customer_by_id($id) {
+        return $this->select_record_by_id($this->customer_table, $id);
     }
 
     public function upsert_customer(CustomerRecord $customer) {

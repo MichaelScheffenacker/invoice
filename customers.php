@@ -16,7 +16,7 @@ echo "<h1>Kunden</h1>";
 echo "<p><a href='edit_customer.php' class='text-button'> [new] </a></p>\n";
 
 $db = new Database();
-$customers = $db->get_customers();
+$customers = $db->select_customers();
 
 /*
  * The reason for implementing the following callback $row_edit is to create
