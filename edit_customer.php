@@ -24,7 +24,7 @@ if (array_key_exists('id', $_GET)) {
 }
 else {
     $customer = new CustomerRecord();
-    $customer->id = $db->get_last_customer_id() + 1;
+    $customer->id = $db->select_last_customer_id() + 1;
 }
 ?>
 

@@ -102,11 +102,8 @@ class Database
         $this->upsert_record($this->invoice_table, $invoice);
     }
 
-    public function get_last_invoice_id() {
-        $stmt = $this->pdo->prepare('SELECT id FROM invoices ORDER BY id DESC LIMIT 1');
-        $stmt->execute();
-        $last_invoice_id = $stmt->fetch()['id'];
-        return $last_invoice_id;
+    public function select_last_invoice_id() {
+        return $this->select_last_record_id($this->invoice_table);
     }
 
     public function get_last_invoice_number() {
@@ -129,11 +126,8 @@ class Database
         $this->upsert_record($this->customer_table, $customer);
     }
 
-    public function get_last_customer_id() {
-        $stmt = $this->pdo->prepare('SELECT id FROM customers ORDER BY id DESC LIMIT 1');
-        $stmt->execute();
-        $last_customer_id = $stmt->fetch()['id'];
-        return $last_customer_id;
+    public function select_last_customer_id() {
+        return $this->select_last_record_id($this->customer_table);
     }
 
     public function get_lineitem_by_invoice_id($invoice_id) {

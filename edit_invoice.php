@@ -46,7 +46,7 @@ function create_lineitems(Database $db): array {
  */
 function new_invoice(Database $db): InvoiceRecord {
     $invoice = new InvoiceRecord();
-    $invoice->id = $db->get_last_invoice_id() + 1;
+    $invoice->id = $db->select_last_invoice_id() + 1;
     $invoice->invoice_number = $db->get_last_invoice_number() + 1;
     $invoice->invoice_date = date('Y-m-d');
     return $invoice;

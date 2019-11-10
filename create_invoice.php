@@ -11,7 +11,7 @@ require_once 'config.php';
 $error_outputs ='';
 $db = new Database();
 
-$invoice_id = $_GET['invoice_id'] ?? $db->get_last_invoice_id();
+$invoice_id = $_GET['invoice_id'] ?? $db->select_last_invoice_id();
 $invoice = $db->select_invoice_by_id($invoice_id);
 $customer = $db->select_customer_by_id($invoice->customer_id);
 $linetems = $db->get_lineitem_by_invoice_id($invoice_id);
