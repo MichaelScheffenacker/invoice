@@ -7,10 +7,10 @@
  * Time: 19:22
  */
 
-require_once __DIR__ . '/Style.php';
+require_once __DIR__ . '/Representation.php';
 require_once __DIR__ . '/../html/utils.php';
 
-class DropDownStyle extends Style {
+class DropDown extends Representation {
     public $options;
 
     public function __construct(

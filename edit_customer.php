@@ -6,26 +6,25 @@
  * Time: 18:07
  */
 
-require_once 'includes/database/Database.php';
 require_once 'includes/html/utils.php';
-$db = new Database();
 
 
 require 'includes/html/head.php';
 
 if (array_key_exists('id', $_POST)) {
     /* @var $customer CustomerRecord */
-    $customer = CustomerRecord::construct_by_alien_array($_POST);
-    $db->upsert_customer($customer);
+    $customer = CustomerRecord::construct_from_alien_array($_POST);
+    $customer->upsert();
+} else {
+    $customer = new CustomerRecord();
+    if (array_key_exists('id', $_GET)) {
+        $customer->set_by_id($_GET['id']);
+    }
+    else {
+        $customer->set_new_id();
+    }
 }
 
-if (array_key_exists('id', $_GET)) {
-    $customer = $db->select_customer_by_id($_GET['id']);
-}
-else {
-    $customer = new CustomerRecord();
-    $customer->id = $db->select_last_customer_id() + 1;
-}
 ?>
 
 <h1>Kunde Editieren</h1>

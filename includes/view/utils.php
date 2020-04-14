@@ -52,7 +52,7 @@ function create_record(
     Database $db
 ): Record {
     /**@var Record $record_class */
-    $record = $record_class::construct_by_alien_array($_POST);
+    $record = $record_class::construct_from_alien_array($_POST);
     $db->upsert_record($table, $record);
     return $record;
 }

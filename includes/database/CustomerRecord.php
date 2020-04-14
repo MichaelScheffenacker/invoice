@@ -12,6 +12,7 @@ require_once __DIR__ . '/../html/utils.php';
 
 class CustomerRecord extends Record
 {
+    protected $_table_name = 'customers';
     public $id = '';
     public $gender = '';
     public $title = '';

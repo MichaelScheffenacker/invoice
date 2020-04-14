@@ -6,7 +6,7 @@
  * Date: 25.02.19
  * Time: 19:13
  */
-abstract class Style {
+abstract class Representation {
     public $name;
     public $value;
     public $readonly;

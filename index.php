@@ -6,7 +6,7 @@
  * Time: 23:24
  */
 
-require_once 'includes/database/Database.php';
+require_once 'includes/database/InvoiceRecord.php';
 require_once 'includes/html/utils.php';
 
 require 'includes/html/head.php';
@@ -14,8 +14,8 @@ require 'includes/html/head.php';
 echo "<h1>Rechnungen</h1>";
 echo "<p><a href='edit_invoice.php' class='text-button'> [new] </a></p>\n";
 
-$db = new Database();
-$invoices = $db->select_invoices();
+$invoice = new InvoiceRecord();
+$invoices = $invoice->select();
 
 $row_edit = function (InvoiceRecord $invoice) : array {
     $row = $invoice->get_fields();

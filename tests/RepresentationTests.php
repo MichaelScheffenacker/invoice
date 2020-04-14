@@ -10,12 +10,12 @@ use PHPUnit\Framework\TestCase;
 
 require_once __DIR__ . '/../includes/html/generic_html_generators.php';
 require_once __DIR__ . '/../includes/view/StyledFields.php';
-require_once __DIR__ . '/../includes/view/TextStyle.php';
-require_once __DIR__ . '/../includes/view/DropDownStyle.php';
+require_once __DIR__ . '/../includes/view/Text.php';
+require_once __DIR__ . '/../includes/view/DropDown.php';
 require_once __DIR__ . '/TestRecord.php';
 require_once __DIR__ . '/TestIdRecord.php';
 
-class StyleTests extends TestCase {
+class RepresentationTests extends TestCase {
     public function test_default_form_html() {
         $expected_html =
             generate_text_input('one', 'one')
@@ -53,8 +53,7 @@ class StyleTests extends TestCase {
             generate_form_select('one', 'one', $options)
             . generate_text_input('two', 'two');
         $styled_record = new StyledFields(new TestRecord());
-        $one_value = $styled_record->get_value_of_field('one');
-        $drop_down_one = new DropDownStyle('one', $one_value, $options);
+        $drop_down_one = new DropDown('one', -1, $options);
         $styled_record->field_style('one', $drop_down_one);
         $this->assertSame($expected_html, $styled_record->generate_html());
     }

@@ -6,13 +6,16 @@
  * Time: 18:18
  */
 
-require_once 'includes/database/Database.php';
+require_once 'includes/database/CustomerRecord.php';
+require_once 'includes/database/InvoiceRecord.php';
+require_once 'includes/database/LineItemRecord.php';
 require_once 'includes/html/utils.php';
 require_once 'includes/view/StyledFields.php';
-require_once 'includes/view/DropDownStyle.php';
+require_once 'includes/view/DropDown.php';
 
+$customer = new CustomerRecord();
+$customers = $customer->select();
 $db = new Database();
-$customers = $db->select_customers();
 
 /**
  * @param Database $db
@@ -28,10 +31,10 @@ function create_lineitems(Database $db): array {
         foreach ($lineitems_array as $lineitem_array) {
             if ($lineitem_array['description'] or $lineitem_array['price']) {
                 /** @var LineItemRecord $lineitem */
-                $lineitem = LineItemRecord::construct_by_alien_array($lineitem_array);
-                $lineitem->id = $db->select_last_record_id($db->lineitem_table) + 1;
+                $lineitem = LineItemRecord::construct_from_alien_array($lineitem_array);
+                $lineitem->set_new_id();
                 $lineitem->invoice_id = $invoice_id;
-                $db->insert_lineitem($lineitem);
+                $lineitem->insert();
                 $lineitems[] = $lineitem;
             }
         }
@@ -44,28 +47,20 @@ function create_lineitems(Database $db): array {
  * @param Database $db
  * @return InvoiceRecord
  */
-function new_invoice(Database $db): InvoiceRecord {
-    $invoice = new InvoiceRecord();
-    $invoice->id = $db->select_last_invoice_id() + 1;
-    $invoice->invoice_number = $db->get_last_invoice_number() + 1;
-    $invoice->invoice_date = date('Y-m-d');
-    return $invoice;
-}
 
-// ## saving to db gets solely triggered by a post request with an invoice_id
+
 if (array_key_exists('id', $_POST)) {
-    $invoice = InvoiceRecord::construct_by_alien_array($_POST);
-    $db->upsert_invoice($invoice);
+    $invoice = InvoiceRecord::construct_from_alien_array($_POST);
+    $invoice->upsert();
     $lineitems = create_lineitems($db);
 } else {
-
+        $invoice = new InvoiceRecord();
     if (array_key_exists('invoice_id', $_GET)) {
-        $invoice_id = $_GET['invoice_id'];
-        $invoice = $db->select_invoice_by_id($invoice_id);
-        $lineitems = $db->get_lineitem_by_invoice_id($invoice_id);
+        $invoice->set_by_id($_GET['invoice_id']);
+        $lineitems = $db->get_lineitem_by_invoice_id($invoice->id);
     }
     else {
-        $invoice = new_invoice($db);
+        $invoice->set_new();
         $lineitems = [];
     }
 }
@@ -86,7 +81,7 @@ $customer_options = new HtmlFormOptions(
 );
 
 $styled_record = new StyledFields($invoice);
-$drop_down_customers = new DropDownStyle(
+$drop_down_customers = new DropDown(
         'customer_id',
         $invoice->customer_id,
         $customer_options

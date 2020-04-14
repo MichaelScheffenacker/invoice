@@ -8,8 +8,8 @@
  */
 
 require_once __DIR__ . '/../database/Record.php';
-require_once __DIR__ . '/Style.php';
-require_once __DIR__ . '/TextStyle.php';
+require_once __DIR__ . '/Representation.php';
+require_once __DIR__ . '/Text.php';
 
 
 // One problem with this implementation (and this problem includes the naming
@@ -50,14 +50,14 @@ class StyledFields {
         foreach ($this->record->get_fields() as $field_name => $field_value) {
             $readonly = ($field_name === 'id');
             $field_value = $field_value ?? '';
-            $styled_field = new TextStyle($field_name, $field_value, $readonly);
+            $styled_field = new Text($field_name, $field_value, $readonly);
             $this->fields[$field_name] = $styled_field;
         }
     }
 
     public function generate_html() : String {
         $str = '';
-        /** @var Style $field */
+        /** @var Representation $field */
         foreach ($this->fields as $field) {
             $str .= $field->generate_html();
         }
@@ -66,17 +66,17 @@ class StyledFields {
 
     public function set_field_readonly(string $field_name) {
         $field = $this->fields[$field_name];
-        /** @var TextStyle $field */
+        /** @var Text $field */
         $field->readonly = True;
     }
 
-    public function field_style(string $field_name, Style $style) {
+    public function field_style(string $field_name, Representation $style) {
         $this->fields[$field_name] = $style;
     }
 
     public function get_value_of_field(string $field_name) {
         $field = $this->fields[$field_name];
-        /** @var Style $field */
+        /** @var Representation $field */
         return $field->value;
     }
 }

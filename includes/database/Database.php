@@ -29,22 +29,6 @@ class Database
             $config->database['username'],
             $config->database['passwd']
         );
-
-        $this->customer_table = new Table(
-            'customers',
-            'CustomerRecord'
-        );
-
-        $this->invoice_table = new Table(
-            'invoices',
-            'InvoiceRecord'
-        );
-
-        $this->lineitem_table = new Table(
-            'lineitems',
-            'LineItemRecord'
-        );
-
     }
 
     public function select_records(Table $table) : array {
@@ -89,45 +73,11 @@ class Database
         return $this->select_last_record($table)->id;
     }
 
-    public function select_invoices() {
-//        'SELECT * FROM invoices ORDER BY invoice_number DESC '
-        return $this->select_records($this->invoice_table);
-    }
-
-    public function select_invoice_by_id($id) {
-        return $this->select_record_by_id($this->invoice_table, $id);
-    }
-
-    public function upsert_invoice(InvoiceRecord $invoice) {
-        $this->upsert_record($this->invoice_table, $invoice);
-    }
-
-    public function select_last_invoice_id() {
-        return $this->select_last_record_id($this->invoice_table);
-    }
-
     public function get_last_invoice_number() {
         $stmt_string = 'SELECT invoice_number FROM invoices ORDER BY invoice_number DESC LIMIT 1';
         $stmt = $this->pdo->prepare($stmt_string);
         $stmt->execute();
-        $last_invoice_number = $stmt->fetch()['invoice_number'];
-        return $last_invoice_number;
-    }
-
-    public function select_customers() {
-        return $this->select_records($this->customer_table);
-    }
-
-    public function select_customer_by_id($id) {
-        return $this->select_record_by_id($this->customer_table, $id);
-    }
-
-    public function upsert_customer(CustomerRecord $customer) {
-        $this->upsert_record($this->customer_table, $customer);
-    }
-
-    public function select_last_customer_id() {
-        return $this->select_last_record_id($this->customer_table);
+        return $stmt->fetch()['invoice_number'];
     }
 
     public function get_lineitem_by_invoice_id($invoice_id) {
@@ -144,15 +94,6 @@ class Database
     public function delete_lineitem_by_invoice_id($invoice_id) {
         $stmt = $this->pdo->prepare('DELETE FROM lineitems WHERE invoice_id = :invoice_id');
         $stmt->bindParam(':invoice_id',$invoice_id);
-        $stmt->execute();
-    }
-
-    public function insert_lineitem(LineItemRecord $record) {
-        $this->insert_record($this->lineitem_table, $record);
-    }
-
-    public function execute($sql) {
-        $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
     }
 
