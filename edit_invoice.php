@@ -14,13 +14,9 @@ require_once 'includes/view/StyledFields.php';
 require_once 'includes/view/DropDown.php';
 
 $customer = new CustomerRecord();
-$customers = $customer->select();
+$customers = $customer->select_all();
 $db = new Database();
 
-/**
- * @param Database $db
- * @return array $lineitems
- */
 function create_lineitems(Database $db): array {
     // All lineitems are deleted and inserted again on every "save"
     $invoice_id = $_POST['id'];
@@ -43,24 +39,18 @@ function create_lineitems(Database $db): array {
 }
 
 /** @var InvoiceRecord $invoice */
-/**
- * @param Database $db
- * @return InvoiceRecord
- */
-
 
 if (array_key_exists('id', $_POST)) {
     $invoice = InvoiceRecord::construct_from_alien_array($_POST);
     $invoice->upsert();
     $lineitems = create_lineitems($db);
 } else {
-        $invoice = new InvoiceRecord();
     if (array_key_exists('invoice_id', $_GET)) {
-        $invoice->set_by_id($_GET['invoice_id']);
-        $lineitems = $db->get_lineitem_by_invoice_id($invoice->id);
+        $invoice = InvoiceRecord::construct_from_id($_GET['invoice_id']);
+        $lineitems = $db->get_lineitems_by_invoice_id($invoice->id);
     }
     else {
-        $invoice->set_new();
+        $invoice = InvoiceRecord::construct_new();
         $lineitems = [];
     }
 }

@@ -186,6 +186,9 @@ class HtmlGeneratorTests extends TestCase
             . '<div><label for="two">two</label>'
             . '<input id="two" type="text" name="two" value="2" />'
             . '</div>' . "\n"
+            . '<div><label for="id">id</label>'
+            . '<input id="id" type="text" name="id" value="" />'  // todo: what value should hat actually have?
+            . '</div>' . "\n"
             . '<div><input type="submit" value="save"></div></form>' . "\n";
         $this->assertSame($result, generate_form($record));
     }

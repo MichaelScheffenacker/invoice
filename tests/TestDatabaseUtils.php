@@ -18,7 +18,7 @@ class TestDatabaseUtils extends TestCase {
 
     public function test_generate_upsert_sql() {
         $expected =
-            "INSERT INTO test (`one`, `two`) VALUES (:ins_one, :ins_two) "
+            "INSERT INTO test (`one`, `two`, `id`) VALUES (:ins_one, :ins_two, :ins_id) "
             . "ON DUPLICATE KEY UPDATE `one`=:up_one, `two`=:up_two";
 
         $actual = generate_upsert_sql($this->table, new TestRecord());
@@ -29,6 +29,7 @@ class TestDatabaseUtils extends TestCase {
         $expected = [
             ':ins_one' => 'aa',
             ':ins_two' => 'bb',
+            ':ins_id' => null,
             ':up_one' => 'aa',
             ':up_two' => 'bb'
         ];

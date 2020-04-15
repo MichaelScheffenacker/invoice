@@ -11,12 +11,13 @@ require_once 'config.php';
 $error_outputs ='';
 $db = new Database();
 
-$invoice = new InvoiceRecord();
-$invoice_id = $_GET['invoice_id'] ?? $invoice->select_last_id();
-$invoice->set_by_id($invoice_id);
-$customer = new CustomerRecord();
-$customer->set_by_id($invoice->customer_id);
-$linetems = $db->get_lineitem_by_invoice_id($invoice_id);
+
+/** @var InvoiceRecord $invoice */
+/** @var CustomerRecord $customer */
+$invoice_id = $_GET['invoice_id'] ?? InvoiceRecord::select_last_id();
+$invoice = InvoiceRecord::construct_from_id($invoice_id);
+$customer = CustomerRecord::construct_from_id($invoice->customer_id);
+$linetems = $db->get_lineitems_by_invoice_id($invoice_id);
 
 function eur_price($price) {
     $f_price = number_format($price, 2, ',', '.');

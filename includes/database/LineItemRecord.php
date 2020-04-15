@@ -10,7 +10,8 @@ require_once __DIR__ . '/Record.php';
 
 class LineItemRecord extends Record
 {
-    protected $_table_name = 'lineitems';
+    protected const _table_name = 'lineitems';
+    protected static $_table;
     public $id;
     public $invoice_id;
     public $description;

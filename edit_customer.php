@@ -16,12 +16,11 @@ if (array_key_exists('id', $_POST)) {
     $customer = CustomerRecord::construct_from_alien_array($_POST);
     $customer->upsert();
 } else {
-    $customer = new CustomerRecord();
     if (array_key_exists('id', $_GET)) {
-        $customer->set_by_id($_GET['id']);
+        $customer = CustomerRecord::construct_from_id($_GET['id']);
     }
     else {
-        $customer->set_new_id();
+        $customer = CustomerRecord::construct_new();
     }
 }
 

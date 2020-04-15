@@ -20,56 +20,55 @@ abstract class Record
      * by letter.
      */
 
-    protected $_table_name;
-    protected $_table;
-    protected $_db;
+    protected const _table_name = null;  // self::NAME workaround to force definition in derived classes
+    protected static $_table;
+    protected static $_db;
 
-    public function __construct()
-    {
-        $this->_table = new Table($this->_table_name, static::class);
-        $this->_db = new Database();
-    }
+    public $id;
 
-    public function select() : array {
-        return $this->_db->select_records($this->_table);
-    }
-
-    public function select_by_id(int $id) : Record {
-        return $this->_db->select_record_by_id($this->_table, $id);
-    }
-
-    public function set_by_id(int $id) : void {
-        $record = $this->select_by_id($id);
-        $properties = self::get_field_names();
-        foreach ($properties as $property) {
-            $this->$property = $record->$property;
+    private static function init() {
+        if (static::$_table == null) {
+            static::$_table = new Table(static::_table_name, static::class);
+            self::$_db = new Database();
         }
     }
 
-    public function insert() : void {
-        $this->_db->insert_record($this->_table, $this);
+    public static function select_all() : array {
+        self::init();
+        return self::$_db->select_records(static::$_table);
     }
 
-    public function upsert() : void {
-        $this->_db->upsert_record($this->_table, $this);
+    public static function construct_from_id(int $id) : Record {
+        self::init();
+        return self::$_db->select_record_by_id(static::$_table, $id);
     }
 
-    public function select_last_id() : int {
-        return $this->_db->select_last_record_id($this->_table);
+    public static function construct_from_alien_array(array $array) : Record {
+        self::init();
+        $record = new static();
+        $properties = self::get_field_names();
+        foreach ($properties as $property) {
+            $record->$property = $array[$property] ?? '';
+        }
+        return $record;
     }
 
-    public function set_new_id(): void {
-        $this->id = $this->select_last_id() + 1;
+    public static function construct_new() : Record {
+        self::init();
+        $record = new static();
+        $record->id = self::select_last_id() + 1;
+        return $record;
     }
 
     public static function get_field_names() : array {
+        self::init();
         $fields = get_class_vars(static::class);
         return array_keys(self::remove_privates($fields));
     }
 
-    public function get_fields() : array  {
-        $fields = get_object_vars($this);
-        return self::remove_privates($fields);
+    public static function select_last_id() : int {
+        self::init();
+        return self::$_db->select_last_record_id(static::$_table);
     }
 
     private static function remove_privates(array $fields) : array {
@@ -81,12 +80,27 @@ abstract class Record
         return array_diff_key($fields, $excludees);
     }
 
-    public static function construct_from_alien_array(array $array) : Record {
-        $record = new static();
-        $properties = self::get_field_names();
-        foreach ($properties as $property) {
-            $record->$property = $array[$property] ?? '';
-        }
-        return $record;
+
+    public function __construct() {
+        self::init();
+    }
+
+    public function insert() : void {
+        self::$_db->insert_record(static::$_table, $this);
+    }
+
+    public function upsert() : void {
+        self::$_db->upsert_record(static::$_table, $this);
+    }
+
+    public function get_fields() : array  {
+        $fields = get_object_vars($this);
+        return self::remove_privates($fields);
+    }
+
+    public function set_new_id() : void {
+        $this->id = self::select_last_id() + 1;
     }
 }
+
+

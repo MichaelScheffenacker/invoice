@@ -19,7 +19,8 @@ class RepresentationTests extends TestCase {
     public function test_default_form_html() {
         $expected_html =
             generate_text_input('one', 'one')
-            . generate_text_input('two', 'two');
+            . generate_text_input('two', 'two')
+            . generate_text_input('id', 'id', '',True);
         $styled_record = new StyledFields(new TestRecord());
         $this->assertSame($expected_html, $styled_record->generate_html());
     }
@@ -27,7 +28,8 @@ class RepresentationTests extends TestCase {
     public function test_readonly_form_html() {
         $expected_html =
             generate_text_input('one', 'one', '', True)
-            . generate_text_input('two', 'two');
+            . generate_text_input('two', 'two')
+            . generate_text_input('id', 'id', '',True);
         $styled_record = new StyledFields(new TestRecord());
         $styled_record->set_field_readonly('one');
         $this->assertSame($expected_html, $styled_record->generate_html());
@@ -51,7 +53,8 @@ class RepresentationTests extends TestCase {
         );
         $expected_html =
             generate_form_select('one', 'one', $options)
-            . generate_text_input('two', 'two');
+            . generate_text_input('two', 'two')
+            . generate_text_input('id', 'id', '',True);
         $styled_record = new StyledFields(new TestRecord());
         $drop_down_one = new DropDown('one', -1, $options);
         $styled_record->field_style('one', $drop_down_one);

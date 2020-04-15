@@ -17,9 +17,6 @@ require_once __DIR__ . '/../../config.php';
 class Database
 {
     private $pdo;
-    public $invoice_table;
-    public $lineitem_table;
-    public $customer_table;
 
     public function __construct()
     {
@@ -65,7 +62,7 @@ class Database
         $sql = "SELECT id FROM $table->name ORDER BY id DESC LIMIT 1";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_CLASS, 'InvoiceRecord');
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $table->class);
         return $stmt->fetch();
     }
 
@@ -80,7 +77,7 @@ class Database
         return $stmt->fetch()['invoice_number'];
     }
 
-    public function get_lineitem_by_invoice_id($invoice_id) {
+    public function get_lineitems_by_invoice_id($invoice_id) {
         $stmt = $this->pdo->prepare(
             'SELECT * FROM lineitems WHERE invoice_id = :invoice_id'
         );
