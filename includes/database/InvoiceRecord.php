@@ -7,10 +7,11 @@
  */
 
 require_once __DIR__ . '/Record.php';
-require_once __DIR__ . '/../../includes/html/utils.php';
 
-class InvoiceRecord extends  Record {
-    protected const _table_name = 'invoices';
+class InvoiceRecord extends  Record
+{
+    public const _table = 'invoices';
+    public const _column = 'invoice_id';
     public $id;
     public $invoice_number;
     public $invoice_date;

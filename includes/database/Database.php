@@ -12,8 +12,6 @@ require_once __DIR__ . '/InvoiceRecord.php';
 require_once __DIR__ . '/LineItemRecord.php';
 require_once __DIR__ . '/../../config.php';
 
-
-
 class Database
 {
     private $pdo;
@@ -28,46 +26,52 @@ class Database
         );
     }
 
-    public function select_records(Table $table) : array {
-        $sql = "SELECT * FROM $table->name";
+    public function select_records($Record) : array {
+        /** @var Record $Record */
+        $table = $Record::_table;
+        $sql = "SELECT * FROM $table";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $table->class);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $Record);
         return $stmt->fetchAll();
     }
 
-    public function select_record_by_id(Table $table, int $id) : Record {
-        $sql = "SELECT * FROM $table->name WHERE id = :id";
+    public function select_record_by_id($Record, int $id) : Record {
+        /** @var Record $Record */
+        $table = $Record::_table;
+        $sql = "SELECT * FROM $table WHERE id = :id";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute([':id' => $id]);
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $table->class);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $Record);
         return $stmt->fetch();
     }
 
-    public function insert_record(Table $table, Record $record) {
-        $sql = generate_insert_sql($table, $record);
+    public function insert_record(Record $record) {
+        $sql = generate_insert_sql($record);
         $execute_array = create_insert_execute_array($record);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($execute_array);
     }
 
-    public function upsert_record(Table $table, Record $record) : void {
-        $sql = generate_upsert_sql($table, $record);
+    public function upsert_record(Record $record) : void {
+        $sql = generate_upsert_sql($record);
         $execute_array = create_upsert_execute_array($record);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($execute_array);
     }
 
-    public function select_last_record(Table $table) {
-        $sql = "SELECT id FROM $table->name ORDER BY id DESC LIMIT 1";
+    public function select_last_record($Record) {
+        /** @var Record $Record */
+        $table = $Record::_table;
+        $sql = "SELECT id FROM $table ORDER BY id DESC LIMIT 1";
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute();
-        $stmt->setFetchMode(PDO::FETCH_CLASS, $table->class);
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $Record);
         return $stmt->fetch();
     }
 
-    public function select_last_record_id(Table $table) : int {
-        return $this->select_last_record($table)->id;
+    public function select_last_record_id($Record) : int {
+        return $this->select_last_record($Record)->id;
     }
 
     public function get_last_invoice_number() {

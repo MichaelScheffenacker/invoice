@@ -54,8 +54,7 @@ class DatabaseTest extends TestCase {
 //    }
 
     public function test_rogue_field() {
-        $table = new Table('invoices', 'RogueInvoiceRecord');
-        $invoice = $this->db->select_records($table)[0];
+        $invoice = $this->db->select_records(RogueInvoiceRecord::class)[0];
         /** @var RogueInvoiceRecord $invoice */
         $this->assertEquals(1,$invoice->id);
         $this->assertEquals(3, $invoice->reference);

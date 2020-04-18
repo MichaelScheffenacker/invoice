@@ -20,27 +20,27 @@ abstract class Record
      * by letter.
      */
 
-    protected const _table_name = null;  // self::NAME workaround to force definition in derived classes
-    protected static $_table;
+    public const _table = null;  // self::NAME workaround to force definition in derived classes
+    public const _column = null;
     protected static $_db;
 
     public $id;
 
     private static function init() {
-        if (static::$_table == null) {
-            static::$_table = new Table(static::_table_name, static::class);
+        if (static::$_db == null) {
             self::$_db = new Database();
         }
     }
 
     public static function select_all() : array {
         self::init();
-        return self::$_db->select_records(static::$_table);
+        return self::$_db->select_records(static::class);
     }
 
     public static function construct_from_id(int $id) : Record {
         self::init();
-        return self::$_db->select_record_by_id(static::$_table, $id);
+
+        return self::$_db->select_record_by_id(static::class, $id);
     }
 
     public static function construct_from_alien_array(array $array) : Record {
@@ -68,7 +68,7 @@ abstract class Record
 
     public static function select_last_id() : int {
         self::init();
-        return self::$_db->select_last_record_id(static::$_table);
+        return self::$_db->select_last_record_id(static::class);
     }
 
     private static function remove_privates(array $fields) : array {
@@ -86,14 +86,14 @@ abstract class Record
     }
 
     public function insert() : void {
-        self::$_db->insert_record(static::$_table, $this);
+        self::$_db->insert_record($this);
     }
 
     public function upsert() : void {
-        self::$_db->upsert_record(static::$_table, $this);
+        self::$_db->upsert_record($this);
     }
 
-    public function get_fields() : array  {
+    public function get_fields() : array {
         $fields = get_object_vars($this);
         return self::remove_privates($fields);
     }

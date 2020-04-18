@@ -25,13 +25,15 @@ const update_prefix = ':up_';
 class Table {
     public $name;
     public $class;
-    public function __construct($name, $class) {
+    public $column;
+    public function __construct($name, $class, $column) {
         $this->name = $name;
         $this->class = $class;
+        $this->column;
     }
 }
 
-function generate_upsert_sql(Table $table, Record $record) : string {
+function generate_upsert_sql(Record $record) : string {
     /*
      * Upserts utilize the id (primary key) in the insert part
      * to identify possible duplicates and forward the request
@@ -39,7 +41,8 @@ function generate_upsert_sql(Table $table, Record $record) : string {
      * require not to include the id. (Absurdly this is just the 
      * opposite from what insert and update alone would require.)
      */
-    
+
+    $table = $record::_table;
     $fields = $record->get_fields();
     $update_fields = subtract_id($fields);
     
@@ -47,20 +50,21 @@ function generate_upsert_sql(Table $table, Record $record) : string {
     $insert_string = implode_insert_place_holders($fields);
     $update_string = implode_update_fields($update_fields);
     return
-        "INSERT INTO $table->name ($columns_string) VALUES ($insert_string) "
-        . "ON DUPLICATE KEY UPDATE $update_string";
+        "INSERT INTO $table ($columns_string) VALUES ($insert_string) "
+        . "ON DUPLICATE KEY UPDATE $update_string;";
 }
 
-function generate_insert_sql(Table $table, Record $record) : string {
+function generate_insert_sql(Record $record) : string {
     /*
      * Inserts ignore the id (primary key), they utilize 
      * auto increment.
      */
+    $table = $record::_table;
     $fields = subtract_id($record->get_fields());
     $columns_string = implode_columns($fields);
     $insert_string = implode_insert_place_holders($fields);
     return
-        "INSERT INTO $table->name ($columns_string) VALUES ($insert_string)";
+        "INSERT INTO $table ($columns_string) VALUES ($insert_string)";
 }
 
 function create_upsert_execute_array(Record $record) : array {

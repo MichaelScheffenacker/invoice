@@ -7,7 +7,7 @@
  */
 
 class RogueInvoiceRecord {
-    protected const _table_name = 'invoices';
+    public const _table = 'invoices';
     public $id;
     public $invoice_number;
     public $invoice_date;
