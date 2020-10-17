@@ -22,6 +22,7 @@ abstract class Record
 
     public const _table = null;  // self::NAME workaround to force definition in derived classes
     public const _column = null;
+    /** @var Database $_db */
     protected static $_db;
 
     public $id;
@@ -53,7 +54,7 @@ abstract class Record
         return $record;
     }
 
-    public static function construct_new() : Record {
+    public static function construct_next() : Record {
         self::init();
         $record = new static();
         $record->id = self::select_last_id() + 1;
@@ -73,8 +74,6 @@ abstract class Record
 
     private static function remove_privates(array $fields) : array {
         $excludees = [
-            '_table_name'=>null,
-            '_table'=>null,
             '_db'=>null
         ];
         return array_diff_key($fields, $excludees);
@@ -102,5 +101,3 @@ abstract class Record
         $this->id = self::select_last_id() + 1;
     }
 }
-
-

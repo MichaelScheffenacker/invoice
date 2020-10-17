@@ -20,7 +20,7 @@ if (array_key_exists('id', $_POST)) {
         $customer = CustomerRecord::construct_from_id($_GET['id']);
     }
     else {
-        $customer = CustomerRecord::construct_new();
+        $customer = CustomerRecord::construct_next();
     }
 }
 

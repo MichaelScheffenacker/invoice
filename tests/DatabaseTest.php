@@ -75,9 +75,9 @@ class DatabaseTest extends TestCase {
     }
 
     public function test_parent_static_relation() {
-        $invoice = InvoiceRecord::construct_new();
+        $invoice = InvoiceRecord::construct_next();
         $this->assertEquals('InvoiceRecord', get_class($invoice));
-        $customer = CustomerRecord::construct_new();
+        $customer = CustomerRecord::construct_next();
         $this->assertEquals('CustomerRecord', get_class($customer));
 
         $invoice = InvoiceRecord::construct_from_id(1);

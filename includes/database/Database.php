@@ -58,6 +58,7 @@ class Database
         $execute_array = create_upsert_execute_array($record);
         $stmt = $this->pdo->prepare($sql);
         $stmt->execute($execute_array);
+        print_r($sql);
     }
 
     public function select_last_record($Record) {
@@ -81,6 +82,18 @@ class Database
         return $stmt->fetch()['invoice_number'];
     }
 
+    public function select_wards_by_keeper($Ward, Record $keeper) {
+        /** @var Record $Ward */
+        $ward_table = $Ward::_table;
+        $keeper_column = $keeper::_column;
+        $sql = "SELECT * FROM $ward_table WHERE $keeper_column = :keeper_id ";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':keeper_id', $keeper->id);
+        $stmt->execute();
+        $stmt->setFetchMode(PDO::FETCH_CLASS, $Ward);
+        return $stmt->fetch();
+    }
+
     public function get_lineitems_by_invoice_id($invoice_id) {
         $stmt = $this->pdo->prepare(
             'SELECT * FROM lineitems WHERE invoice_id = :invoice_id'
@@ -90,6 +103,16 @@ class Database
         $stmt->setFetchMode(PDO::FETCH_CLASS, 'LineItemRecord');
         $tasks = $stmt->fetchAll();
         return $tasks;
+    }
+
+    public function delete_wards_by_keeper($Ward, Record $keeper) {
+        /** @var Record $Ward */
+        $ward_table = $Ward::_table;
+        $keeper_column = $keeper::_column;
+        $sql = "DELETE FROM $ward_table WHERE $keeper_column = :keeper_id";
+        $stmt = $this->pdo->prepare($sql);
+        $stmt->bindParam(':keeper_id', $keeper->id);
+        $stmt->execute();
     }
 
     public function delete_lineitem_by_invoice_id($invoice_id) {

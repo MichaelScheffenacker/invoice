@@ -50,7 +50,7 @@ if (array_key_exists('id', $_POST)) {
         $lineitems = $db->get_lineitems_by_invoice_id($invoice->id);
     }
     else {
-        $invoice = InvoiceRecord::construct_new();
+        $invoice = InvoiceRecord::construct_next();
         $lineitems = [];
     }
 }

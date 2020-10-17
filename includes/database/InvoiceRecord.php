@@ -18,9 +18,9 @@ class InvoiceRecord extends  Record
     public $customer_id;
     public $reference;
 
-    public static function construct_new() : Record {
+    public static function construct_next() : Record {
         /** @var InvoiceRecord $invoice */
-        $invoice = parent::construct_new();
+        $invoice = parent::construct_next();
         $invoice->invoice_number = self::$_db->get_last_invoice_number() + 1;
         $invoice->invoice_date = date('Y-m-d');
         return $invoice;
